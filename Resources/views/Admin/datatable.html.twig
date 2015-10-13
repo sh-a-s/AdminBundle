@@ -1,0 +1,11 @@
+{{ datatable({
+    'id' : table_id,
+    'entity_name' : entity,
+    'bundle_name' : bundle,
+    'edit_route' : 'admin_edit',
+    'delete_route' : 'admin_delete',
+    'js' : {
+        'sAjaxSource' : path('admin_grid', {entity: entity, bundle: bundle, context: context, table_id: table_id})
+    }
+})
+}}

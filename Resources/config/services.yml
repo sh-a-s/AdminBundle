@@ -1,0 +1,5 @@
+services:
+    itf.admin_helper:
+        class:        ITF\AdminBundle\Admin\AdminHelper
+        arguments:    [ "@doctrine.orm.entity_manager", "@service_container" ]
+

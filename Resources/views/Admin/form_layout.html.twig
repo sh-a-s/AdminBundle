@@ -1,0 +1,20 @@
+{% use "bootstrap_3_layout.html.twig" %}
+
+{%- block form_widget_simple -%}
+    {%- set type = type|default('text') -%}
+
+    {{- parent() -}}
+
+    {% if type == 'file' %}
+        {% set entity = form.parent.vars.value %}
+        {% set file_attr = attr['data-file'] %}
+        {% set property = file_attr|replace({'_': ''}) %}
+        {% set upload = attribute(entity, 'upload') %}
+        {% set filename = attribute(entity, property) %}
+
+        {% if filename != '' %}
+            {% set image = upload[file_attr].path ~ '/' ~ attribute(entity, property) %}
+            <img src="{{ asset(image) }}" />
+        {% endif %}
+    {% endif %}
+{%- endblock form_widget_simple -%}

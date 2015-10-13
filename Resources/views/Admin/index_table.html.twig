@@ -1,0 +1,29 @@
+{% set _entity = app.request.get('entity') %}
+{% set _Entity = app.request.get('entity')|capitalize %}
+
+<table class="table table-striped table-hover records_list">
+    <thead>
+    <tr>
+        {% for key,attr in config.list_attr %}
+            <th>{{ key }}</th>
+        {% endfor %}
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for entity in entities %}
+        <tr>
+            {% for key,attr in config.list_attr %}
+                <td>{{ attribute(entity, attr) }}</td>
+            {% endfor %}
+
+            <td>
+                <a class="btn btn-xs btn-default" href="{{ path('admin_edit', { 'entity': _entity, 'id': entity.id }) }}">
+                    edit
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+

@@ -1,0 +1,8 @@
+imports:
+    - { resource: services.yml }
+    - { resource: assetic.yml }
+
+ali_datatable:
+    all:    ~
+    js:     ~
+

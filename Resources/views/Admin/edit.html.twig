@@ -1,0 +1,150 @@
+{% extends 'ITFAdminBundle::admin_base.html.twig' %}
+
+{% form_theme form '@ITFAdmin/Admin/form_layout.html.twig' %}
+
+{% set _entity = app.request.get('entity') %}
+{% set _Entity = app.request.get('entity')|capitalize %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {% stylesheets filter="cssrewrite"
+    'bundles/itfadmin/inspinia/css/plugins/dataTables/dataTables.bootstrap.css'
+    'bundles/itfadmin/inspinia/css/plugins/dataTables/dataTables.responsive.css'
+    'bundles/itfadmin/inspinia/css/plugins/dataTables/dataTables.tableTools.min.css'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block main_action_button %}
+    <a class="display-inline-block btn btn-default" href="{{ path('admin_list', {entity: _entity, bundle: bundle}) }}">
+        Back
+    </a>
+    <span class="display-inline-block">
+        {% if delete_form is defined %}
+            {{ form(delete_form) }}
+        {% endif %}
+    </span>
+{% endblock %}
+
+{% block admin_title %}Edit {{ _Entity }}{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    {{ form_start(form) }}
+
+                        {% for name, elem in form.children %}
+                            {% if name == 'submit' or name == 'submit_stay' %}
+                                <div class="display-inline-block">
+                                    {{ form_row(elem) }}
+                                </div>
+                            {% else %}
+                                {{ form_row(elem) }}
+                            {% endif %}
+                        {% endfor %}
+
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if entity_assoc|length > 0 %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                {% for assoc in entity_assoc|sort %}
+                    <li role="presentation">
+                        <a href="#{{ assoc.fieldName }}" role="tab" data-toggle="tab">{{ assoc.fieldName }}</a>
+                    </li>
+                {% endfor %}
+                </ul>
+
+                <div class="tab-content">
+                    {% for assoc in entity_assoc|sort %}
+                        <div role="tabpanel" class="tab-pane" id="{{ assoc.fieldName }}">
+                            <div class="panel-body">
+                                {{ render(controller('ITFAdminBundle:Admin:index', {
+                                    bundle: bundle,
+                                    entity: assoc.fieldName|lower,
+                                    join_context: true,
+                                    context: assoc.context,
+                                    table_id: 'dt-join-' ~ assoc.fieldName|lower
+                                })) }}
+
+                                <a class="display-inline-block btn btn-success" style="margin:10px 0;"
+                                   href="{{ path('admin_new', {entity: assoc.fieldName|lower, bundle: bundle}) }}?{{ entity_name }}={{ entity.id }}"
+                                   target="_blank">
+
+                                    add {{ assoc.fieldName }}
+                                </a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {% javascripts
+    'bundles/itfadmin/inspinia/js/plugins/dataTables/jquery.dataTables.js'
+    'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.bootstrap.js'
+    'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.responsive.js'
+    'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.tableTools.min.js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+
+    <script>
+        $(function() {
+            $('.nav-tabs li:first-child, .tab-content .tab-pane:first-child').addClass('active');
+        })
+    </script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{#{% block body -%}
+    <h1>
+        <span class="display-inline-block">Edit: {{ _Entity }}</span>
+        <a class="display-inline-block btn btn-default" href="{{ path('admin_list', {entity: _entity, bundle: bundle}) }}">
+            Back
+        </a>
+        <span class="display-inline-block">
+            {% if delete_form is defined %}
+                {{ form(delete_form) }}
+            {% endif %}
+        </span>
+    </h1>
+
+    {{ form(form) }}
+
+
+
+    <div>
+
+    </div>
+{% endblock %}#}
+

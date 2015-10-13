@@ -1,0 +1,29 @@
+<ul class="nav metismenu" id="side-menu">
+    <li class="nav-header">
+        <div class="dropdown profile-element">
+            <span>
+                <!--<img alt="image" class="img-circle" src="img/profile_small.jpg" />-->
+            </span>
+            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+                <span class="clear">
+                    <span class="block m-t-xs">
+                        <strong class="font-bold">David Williams</strong>
+                    </span>
+                </span>
+            </a>
+        </div>
+        <div class="logo-element">
+            PN
+        </div>
+    </li>
+
+    <li>
+        <a href="{{ path('admin_dashboard', {bundle: bundle}) }}"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span></a>
+    </li>
+
+    {% for item in menu %}
+    <li {% if item.active == true %} class="active"{% endif %}>
+        <a href="{{ item.url }}"><i class="fa fa-edit"></i> <span class="nav-label">{{ item.title }}</span></a>
+    </li>
+    {% endfor %}
+</ul>

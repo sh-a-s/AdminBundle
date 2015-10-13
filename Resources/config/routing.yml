@@ -1,0 +1,39 @@
+admin_mass_delete:
+    path:     /admin_mass_delete
+    defaults: { _controller: "ITFAdminBundle:Admin:multipleDelete" }
+
+admin_dashboard:
+    path:     /{bundle}/dashboard
+    defaults: { _controller: "ITFAdminBundle:Admin:dashboard" }
+
+admin_grid:
+    path:     /{bundle}/grid/{entity}/{table_id}
+    defaults: { _controller: "ITFAdminBundle:Admin:grid" }
+
+admin_list:
+    path:     /{bundle}/{entity}
+    defaults: { _controller: "ITFAdminBundle:Admin:index" }
+
+admin_new:
+    path:     /{bundle}/{entity}/new
+    defaults: { _controller: "ITFAdminBundle:Admin:new" }
+
+admin_create:
+    path:     /{bundle}/{entity}/create
+    defaults: { _controller: "ITFAdminBundle:Admin:create" }
+    methods:  POST
+
+admin_edit:
+    path:     /{bundle}/{entity}/{id}/edit
+    defaults: { _controller: "ITFAdminBundle:Admin:edit" }
+
+admin_update:
+    path:     /{bundle}/{entity}/{id}/update
+    defaults: { _controller: "ITFAdminBundle:Admin:update" }
+    methods:  [POST, PUT]
+
+admin_delete:
+    path:     /{bundle}/{entity}/{id}/delete
+    defaults: { _controller: "ITFAdminBundle:Admin:delete" }
+    methods:  [POST, DELETE]
+
