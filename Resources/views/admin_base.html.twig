@@ -25,7 +25,8 @@
             <div class="sidebar-collapse">
                 {{ render(controller('ITFAdminBundle:AdminMenu:listEntities', {
                     bundle: bundle,
-                    current_entity: entity_name
+                    current_entity: entity_name,
+                    _route: app.request.attributes.get('_route')
                 })) }}
             </div>
         </nav>

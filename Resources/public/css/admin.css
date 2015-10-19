@@ -5,3 +5,28 @@ body {
 .nav-header {
     padding:19px 25px;
 }
+
+/* entity locale switch */
+.entity-lang-switch {
+    margin-bottom: -1px;
+}
+    .entity-lang-switch .btn {
+        box-shadow:none !important;
+        border-bottom-color: transparent !important;
+        background-color:#C3C3C3;
+        z-index: 1;
+    }
+        .entity-lang-switch > .btn:first-child {
+            border-bottom-left-radius:0;
+        }
+        .entity-lang-switch > .btn:last-child {
+            border-bottom-right-radius:0;
+        }
+
+        .entity-lang-switch .btn-default.active {
+            background-color:white;
+            border-color:#e7eaec;
+            border-width:1px 1px 0 1px;
+            box-shadow:none !important;
+            color:black;
+        }

@@ -344,7 +344,7 @@ class AdminHelper
 			'where' => array(),
 		);
 
-		$this->datatable['join_exp'] = \Doctrine\ORM\Query\Expr\Join::INNER_JOIN;
+		$this->datatable['join_exp'] = \Doctrine\ORM\Query\Expr\Join::LEFT_JOIN;
 	}
 
 	protected function dtAddEntity($entity)
@@ -461,6 +461,29 @@ class AdminHelper
 		}
 
 		return $menu;
+	}
+
+	public function isLoggedIn()
+	{
+		if ($this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY')
+			|| $this->container->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
+
+			return true;
+		}
+
+		return false;
+	}
+
+	public function disableProfiler()
+	{
+		if ($this->container->has('profiler')) {
+			$this->container->get('profiler')->disable();
+		}
+	}
+
+	public function getUser()
+	{
+		return $this->container->get('security.token_storage')->getToken()->getUser();
 	}
 
 	public function getDatatable($entity, Request $request = NULL)

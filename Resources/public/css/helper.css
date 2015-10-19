@@ -1,0 +1,91 @@
+/* align */
+.align-center 	{ text-align:center; }
+.align-left 	{ text-align:left; }
+.align-right 	{ text-align:right; }
+
+/* vertical-align */
+.vertical-align-top     { vertical-align:top !important; }
+.vertical-align-middle  { vertical-align:middle !important; }
+.vertical-align-bottom  { vertical-align:bottom !important; }
+
+/* padding */
+.no-padding         { padding: 0 !important; }
+.no-padding-top 	{ padding-top: 0 !important; }
+.no-padding-right 	{ padding-right: 0 !important; }
+.no-padding-bottom 	{ padding-bottom: 0 !important; }
+.no-padding-left 	{ padding-left: 0 !important; }
+
+/* margin */
+.no-margin          { margin: 0 !important; }
+.no-margin-top 	    { margin-top: 0 !important; }
+.no-margin-right 	{ margin-right: 0 !important; }
+.no-margin-bottom 	{ margin-bottom: 0 !important; }
+.no-margin-left 	{ margin-left: 0 !important; }
+
+/* width */
+.width-100  { width:100% !important; }
+
+/* select */
+.no-select {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* img */
+.img-responsive {
+    max-width:100%;
+    display:block;
+    height: auto;
+}
+.img-responsive-height {
+    max-height:100%;
+    display: block;
+    height: auto;
+}
+
+/* font */
+.bold   { font-weight:500; }
+.italic { font-style:italic; }
+.thin   { font-weight:100; }
+
+/* display */
+.display-block          { display: block !important; }
+.display-inline         { display: inline !important; }
+.display-inline-block   { display: inline-block !important; }
+.display-table          { display: table !important; height:100%; }
+.display-table-cell {
+    display: table-cell !important;
+    vertical-align:middle;
+    text-align:center;
+}
+
+/* position */
+.position-relative  { position:relative !important; }
+.position-absolute  { position:absolute !important; }
+.position-fixed     { position:fixed !important; }
+
+/* ul */
+ul.inline-list li {
+    display:inline-block;
+}
+
+/* cursor */
+.cursor-default     { cursor:default !important; }
+.cursor-pointer     { cursor:pointer !important; }
+
+/* misc */
+.clear-after:after {
+    display:block;
+    content: '';
+    clear:both;
+}
+.placebo {
+    visibility: hidden;
+}
+.overflow-hidden {
+    overflow:hidden !important;
+}

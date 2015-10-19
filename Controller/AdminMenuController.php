@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AdminMenuController extends Controller
 {
-	public function listEntitiesAction($bundle, $current_entity = NULL)
+	public function listEntitiesAction($bundle, $current_entity = NULL, $_route = NULL)
 	{
 		$ah = $this->get('itf.admin_helper');
 		$ah->setBundle($bundle);
@@ -18,7 +18,8 @@ class AdminMenuController extends Controller
 
 		return $this->render('ITFAdminBundle:Admin:menu.html.twig', array(
 			'menu' => $ah->getAdminMenu($current_entity),
-			'bundle' => $bundle
+			'bundle' => $bundle,
+			'_route' => @$_route
 		));
 	}
 }

@@ -1,0 +1,9 @@
+<div class="btn-group entity-lang-switch" role="group">
+    {% for item in items %}
+        <a href="{% if item.url is defined %}{{ item.url }}{% endif %}"
+           class="btn btn-default {% if item.active == true %}active{% endif %}">
+
+            {{ item.label }}
+        </a>
+    {% endfor %}
+</div>

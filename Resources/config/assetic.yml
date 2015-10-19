@@ -7,18 +7,16 @@ assetic:
   assets:
       admin_css:
           inputs:
-              - '@AppBundle/Resources/public/css/style.css'
               - 'bundles/alidatatable/third-party/bootstrap/css/bootstrap.min.css'
               - 'bundles/alidatatable/css/dataTables.bootstrap.min.css'
+              - '@ITFAdminBundle/Resources/public/css/helper.css'
               - '@ITFAdminBundle/Resources/public/css/admin.css'
-              - 'lib/css/helper.css'
       admin_js:
           inputs:
-              - 'lib/js/hinclude.js'
-              - 'lib/js/modernizr-2.8.3.min.js'
-              - 'lib/js/respond.js'
               - 'bundles/alidatatable/js/jquery.min.js'
-              - 'lib/plugins/bs-custom/js/bs-custom.min.js'
+              - '@ITFAdminBundle/Resources/public/js/modernizr-2.8.3.min.js'
+              - '@ITFAdminBundle/Resources/public/js/respond.js'
+              - '@ITFAdminBundle/Resources/public/plugins/bs-custom/js/bs-custom.min.js'
               - 'bundles/alidatatable/js/jquery.dataTables.min.js'
               - 'bundles/alidatatable/js/dataTables.bootstrap.min.js'
 

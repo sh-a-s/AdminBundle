@@ -6,3 +6,51 @@ ali_datatable:
     all:    ~
     js:     ~
 
+doctrine:
+    orm:
+        entity_managers:
+            default:
+                mappings:
+                    gedmo_translatable:
+                        type: annotation
+                        prefix: Gedmo\Translatable\Entity
+                        dir: "%kernel.root_dir%/../vendor/gedmo/doctrine-extensions/lib/Gedmo/Translatable/Entity"
+                        alias: GedmoTranslatable # (optional) it will default to the name set for the mapping
+                        is_bundle: false
+
+
+stfalcon_tinymce:
+    include_jquery: true
+    tinymce_jquery: true
+    selector: ".tinymce"
+    theme:
+        # Simple theme: same as default theme
+        simple:
+            min_height: 300
+            valid_children: "+body[style]"
+            extended_valid_elements: "span"
+            relative_urls: false
+            convert_urls: false
+            menubar: false
+            plugins:
+                - "advlist autolink lists link image charmap print preview hr anchor pagebreak"
+                - "searchreplace visualblocks visualchars code fullscreen"
+                - "insertdatetime media nonbreaking save table contextmenu directionality"
+                - "paste"
+            toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | media code"
+
+        # Advanced theme with almost all enabled plugins
+        page:
+             #document_base_url: "/web/"
+             min_height: 600
+             valid_children: "+body[style]"
+             extended_valid_elements: "span"
+             relative_urls: false
+             convert_urls: false
+             plugins:
+                 - "advlist autolink lists link image charmap print preview hr anchor pagebreak"
+                 - "searchreplace visualblocks visualchars code fullscreen"
+                 - "insertdatetime media nonbreaking save table contextmenu directionality"
+                 - "paste"
+             toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | media code"
+             image_advtab: true

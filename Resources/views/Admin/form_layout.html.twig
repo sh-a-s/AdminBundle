@@ -9,7 +9,7 @@
         {% set entity = form.parent.vars.value %}
         {% set file_attr = attr['data-file'] %}
         {% set property = file_attr|replace({'_': ''}) %}
-        {% set upload = attribute(entity, 'upload') %}
+        {% set upload = attribute(entity, 'getUploadInformation') %}
         {% set filename = attribute(entity, property) %}
 
         {% if filename != '' %}

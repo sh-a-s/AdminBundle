@@ -18,6 +18,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
  */
 class AdminController extends Controller
 {
+    protected $default_locale = 'en';
+
 
 	/**
 	 * set datatable configs
@@ -133,7 +135,7 @@ class AdminController extends Controller
                     'id' => $entity->getEntity()->getId(),
                     'entity' => $entity->getName('strtolower'),
                     'bundle' => $ah->getBundleNameShort(),
-                    'entity_name'   => $entity->getName('strtolower')
+                    /*'entity_name'   => $entity->getName('strtolower')*/
                 )));
             }
 
@@ -141,7 +143,7 @@ class AdminController extends Controller
             return $this->redirect($this->generateUrl('admin_list', array(
                 'entity' => $entity->getName('strtolower'),
                 'bundle' => $ah->getBundleNameShort(),
-                'entity_name'   => $entity->getName('strtolower')
+                /*'entity_name'   => $entity->getName('strtolower')*/
             )));
         }
 
@@ -194,21 +196,36 @@ class AdminController extends Controller
 	 *
 	 * @return \Symfony\Component\HttpFoundation\Response
 	 */
-    public function editAction($bundle, $entity, $id)
+    public function editAction($bundle, $entity, $id, Request $request)
     {
+        // set locale
+        $entity_locale = $this->default_locale;
+        if (strlen($request->get('locale')) > 0) {
+            $entity_locale = $request->get('locale');
+        }
+
 		$ah = $this->get('itf.admin_helper');
 		$ah->setBundle($bundle);
 
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository( $ah->getEntityRepository($entity) )->find($id);
+
+        // locale
+		$is_translatable = false;
+        if (method_exists($entity, 'setTranslatableLocale')) {
+            $entity->setTranslatableLocale($entity_locale);
+            $em->refresh($entity);
+			$is_translatable = true;
+        }
+
         $entity = new Entity($entity, $this);
 
         if (!$entity) {
             throw $this->createNotFoundException(sprintf('Unable to find %e entity.', $entity->getName()));
         }
 
-		$form = $this->createActionForm($entity, 'edit');
+		$form = $this->createActionForm($entity, 'edit', $entity_locale);
         $deleteForm = $this->createDeleteForm($entity->getName(), $id);
 
         return $this->render('ITFAdminBundle:Admin:edit.html.twig', array(
@@ -217,7 +234,8 @@ class AdminController extends Controller
             'form'        => $form->createView(),
             'delete_form' => $deleteForm->createView(),
             'entity_assoc'=> $entity->getEntityAssociations(),
-            'entity_name' => $entity->getName('strtolower')
+            'entity_name' => $entity->getName('strtolower'),
+			'entity_translatable' => $is_translatable
         ));
     }
 
@@ -234,12 +252,24 @@ class AdminController extends Controller
 	 */
     public function updateAction($bundle, Request $request, $entity, $id)
     {
+        // set locale
+        $entity_locale = $this->default_locale;
+        if (strlen($request->get('locale')) > 0) {
+            $entity_locale = $request->get('locale');
+        }
+
 		$ah = $this->get('itf.admin_helper');
 		$ah->setBundle($bundle);
 
         $em = $this->getDoctrine()->getManager();
 
         $entity = $em->getRepository( $ah->getEntityRepository($entity) )->find($id);
+
+        // locale
+        if (method_exists($entity, 'setTranslatableLocale')) {
+            $entity->setTranslatableLocale($entity_locale);
+        }
+
         $entity = new Entity($entity, $this);
 
 		if (!$entity) {
@@ -255,6 +285,7 @@ class AdminController extends Controller
             $entityUpload = new EntityUpload($entity->getEntity());
             $entityUpload->upload();
 
+            //$em->persist($entity);
 			$em->flush();
 
             // clear
@@ -267,7 +298,8 @@ class AdminController extends Controller
                 return $this->redirect($this->generateUrl('admin_edit', array(
                     'id' => $id,
                     'entity' => $entity->getName('strtolower'),
-                    'bundle' => $ah->getBundleNameShort()
+                    'bundle' => $ah->getBundleNameShort(),
+                    'locale' => $entity_locale
                 )));
             }
 
@@ -329,7 +361,7 @@ class AdminController extends Controller
 	 *
 	 * @return \Symfony\Component\Form\Form
 	 */
-	private function createActionForm($entity, $type)
+	private function createActionForm($entity, $type, $entity_locale = NULL)
 	{
         $ah = $this->get('itf.admin_helper');
 		$type_class = $entity->getFormTypeClass();
@@ -346,14 +378,16 @@ class AdminController extends Controller
 				break;
 			case 'edit':
 				$method = 'PUT';
-				$action = $this->generateUrl(
-					'admin_update',
-					array(
-                        'bundle' => $ah->getBundleNameShort(),
-						'entity' => $entity->getName('strtolower'),
-						'id' => $entity->getEntity()->getId()
-					)
+				$infoArray = array(
+					'bundle' => $ah->getBundleNameShort(),
+					'entity' => $entity->getName('strtolower'),
+					'id' => $entity->getEntity()->getId()
 				);
+				if (!empty($entity_locale)) {
+					$infoArray['locale'] = $entity_locale;
+				}
+
+				$action = $this->generateUrl('admin_update', $infoArray);
 				$submit_label = 'Update';
 				break;
 		}
@@ -403,4 +437,34 @@ class AdminController extends Controller
             ->getForm()
         ;
     }
+
+	public function entityLanguageSwitchAction($bundle, $entity, $id)
+	{
+		$locales = array('en', 'de', 'fr', 'it');
+		$Entity = new Entity($entity, $this);
+
+		$request = Request::createFromGlobals();
+		$current_locale = $request->get('locale');
+		if (empty($current_locale)) {
+			$current_locale = $this->default_locale;
+		}
+
+		$items = array();
+		foreach($locales as $locale) {
+			$items[] = array(
+				'label' => strtoupper($locale),
+				'active' => ($locale == $current_locale),
+				'url' => $this->generateUrl('admin_edit', array(
+					'bundle' => $bundle,
+					'entity' => $Entity->getName('strtolower'),
+					'id' => $id,
+					'locale' => $locale
+				))
+			);
+		}
+
+		return $this->render('@ITFAdmin/Admin/helper/bs.btn-groups.html.twig', array(
+			'items' => $items
+		));
+	}
 }
