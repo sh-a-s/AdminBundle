@@ -198,6 +198,9 @@ class AdminController extends Controller
 	 */
     public function editAction($bundle, $entity, $id, Request $request)
     {
+        $translatable = $this->container->get('gedmo.listener.translatable');
+        $translatable->setTranslationFallback(false);
+
         // set locale
         $entity_locale = $this->default_locale;
         if (strlen($request->get('locale')) > 0) {

@@ -51,6 +51,6 @@ stfalcon_tinymce:
                  - "advlist autolink lists link image charmap print preview hr anchor pagebreak"
                  - "searchreplace visualblocks visualchars code fullscreen"
                  - "insertdatetime media nonbreaking save table contextmenu directionality"
-                 - "paste"
-             toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | media code"
+                 - "paste preview"
+             toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | media preview code"
              image_advtab: true

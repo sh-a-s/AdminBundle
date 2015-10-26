@@ -44,10 +44,10 @@
                     </div>
                     <ul class="nav navbar-top-links navbar-right">
                         <li>
-                            <span class="m-r-sm text-muted welcome-message">Prestigenews Backend</span>
+                            <span class="m-r-sm text-muted welcome-message">Backend</span>
                         </li>
                         <li>
-                            <a href="login.html">
+                            <a href="{{ path('fos_user_security_logout') }}">
                                 <i class="fa fa-sign-out"></i> Log out
                             </a>
                         </li>
@@ -78,12 +78,6 @@
             <div class="wrapper wrapper-content">
                 {% block content %}
                 <div class="middle-box text-center">
-                    <h3 class="font-bold">This is page content</h3>
-                    <div class="error-desc">
-                        You can create here any grid layout you want. And any variation layout you imagine:) Check out
-                        main dashboard and other site. It use many different layout.
-                        <br/><a href="index.html" class="btn btn-primary m-t">Dashboard</a>
-                    </div>
                 </div>
                 {% endblock %}
             </div>

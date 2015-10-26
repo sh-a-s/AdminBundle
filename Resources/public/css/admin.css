@@ -12,7 +12,7 @@ body {
 }
     .entity-lang-switch .btn {
         box-shadow:none !important;
-        border-bottom-color: transparent !important;
+        border: none !important;
         background-color:#C3C3C3;
         z-index: 1;
     }
