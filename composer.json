@@ -17,7 +17,5 @@
             "Company\\DemoBundle" : ""
         }
     },
-    "target-dir" : "ITF/AdminBundle",
-    "repositories" : [{
-    }]
+    "target-dir" : "ITF/AdminBundle"
 }
