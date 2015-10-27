@@ -16,7 +16,7 @@
     },
     "autoload" : {
         "psr-0" : {
-            "Company\\DemoBundle" : ""
+            "ITF\\AdminBundle" : ""
         }
     },
     "target-dir" : "ITF/AdminBundle"
