@@ -453,6 +453,7 @@ class AdminHelper
 				'title' => $this->getEntityNameFromClass($entity),
 				'entitiy_class' => $entity,
 				'active' => ($current_entity == $this->getEntityName($entity, 'strtolower')),
+				'has_error' => !class_exists($this->getEntityFormTypeClass($entity)),
 				'url' => $this->container->get('router')->generate('admin_list', array(
 					'entity' => $this->getEntityName($entity, 'strtolower'),
 					'bundle' => $this->getBundleNameShort()

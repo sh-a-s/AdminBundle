@@ -23,7 +23,14 @@
 
     {% for item in menu %}
     <li {% if item.active == true %} class="active"{% endif %}>
-        <a href="{{ item.url }}"><i class="fa fa-edit"></i> <span class="nav-label">{{ item.title }}</span></a>
+        <a href="{{ item.url }}" {% if item.has_error is sameas(true) %}style="opacity:.5;"{% endif %}>
+            {% if item.has_error is sameas(true) %}
+                <i class="fa fa-exclamation-triangle"></i>
+            {% else %}
+                <i class="fa fa-edit"></i>
+            {% endif %}
+            <span class="nav-label">{{ item.title }}</span>
+        </a>
     </li>
     {% endfor %}
 
