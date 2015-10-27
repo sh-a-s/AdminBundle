@@ -11,13 +11,13 @@
         "MIT"
     ],
     "require" : {
+        "php":                      ">=5.3.3",
+        "symfony/framework-bundle": "~2.0"
     },
     "autoload" : {
         "psr-0" : {
-            "Company\\DemoBundle" : ""
+            "ITF\\AdminBundle" : ""
         }
     },
-    "target-dir" : "ITF/AdminBundle",
-    "repositories" : [{
-    }]
+    "target-dir" : "ITF/AdminBundle"
 }
