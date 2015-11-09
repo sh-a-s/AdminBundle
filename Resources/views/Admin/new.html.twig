@@ -1,8 +1,25 @@
 {% extends 'ITFAdminBundle::admin_base.html.twig' %}
-{% form_theme form 'bootstrap_3_layout.html.twig' %}
+{% form_theme form '@GenemuForm/Form/div_layout.html.twig' %}
 
 {% set _entity = app.request.get('entity') %}
 {% set _Entity = app.request.get('entity')|capitalize %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {% stylesheets filter="cssrewrite"
+    '@admin_edit_css'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block stylesheet %}
+    {{ parent() }}
+
+    {# GenemuForm #}
+    {{ form_stylesheet(form) }}
+{% endblock %}
 
 {% block main_action_button %}
     <a class="display-inline-block btn btn-default" href="{{ path('admin_list', {entity: _entity, bundle: bundle}) }}">
@@ -35,5 +52,21 @@
         </div>
     </div>
     {{ tinymce_init() }}
+{% endblock %}
 
+{% block javascripts %}
+    {{ parent() }}
+
+    {% javascripts
+    '@admin_edit_js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    {# GenemuForm #}
+    {{ form_javascript(form) }}
 {% endblock %}

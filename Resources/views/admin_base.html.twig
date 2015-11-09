@@ -8,18 +8,24 @@
 
     {% block stylesheets %}
         {% stylesheets filter="cssrewrite"
-        'bundles/itfadmin/inspinia/css/bootstrap.min.css'
-        'bundles/itfadmin/inspinia/font-awesome/css/font-awesome.css'
-        'bundles/itfadmin/inspinia/css/style.css'
-        'bundles/itfadmin/css/admin.css'
-        'lib/css/helper.css'
+            'bundles/itfadmin/inspinia/css/bootstrap.min.css'
+            'bundles/itfadmin/inspinia/font-awesome/css/font-awesome.css'
+            'bundles/itfadmin/inspinia/css/style.css'
         %}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
 
+    {% block stylesheet %}
+        {% stylesheets filter="cssrewrite"
+            '@ITFAdminBundle/Resources/public/css/admin.css'
+            '@ITFAdminBundle/Resources/public/css/helper.css'
+        %}
+        <link rel="stylesheet" href="{{ asset_url }}" />
+        {% endstylesheets %}
+    {% endblock %}
 </head>
-<body class="">
+<body class="fixed-sidebar">
     <div id="wrapper">
         <nav class="navbar-default navbar-static-side" role="navigation">
             <div class="sidebar-collapse">
@@ -103,6 +109,12 @@
         {% endjavascripts %}
     {% endblock %}
 
-    {% block javascript %}{% endblock %}
+    {% block javascript %}
+        {% javascripts
+            '@ITFAdminBundle/Resources/public/js/plugins.js'
+        %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endblock %}
 </body>
 </html>

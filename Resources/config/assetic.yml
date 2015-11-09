@@ -10,16 +10,34 @@ assetic:
               - 'bundles/alidatatable/third-party/bootstrap/css/bootstrap.min.css'
               - 'bundles/itfadmin/inspinia/font-awesome/css/font-awesome.css'
               - 'bundles/alidatatable/css/dataTables.bootstrap.min.css'
-              - '@ITFAdminBundle/Resources/public/css/helper.css'
-              - '@ITFAdminBundle/Resources/public/css/admin.css'
       admin_js:
           inputs:
               - 'bundles/alidatatable/js/jquery.min.js'
-              - '@ITFAdminBundle/Resources/public/js/modernizr-2.8.3.min.js'
-              - '@ITFAdminBundle/Resources/public/js/respond.js'
-              - '@ITFAdminBundle/Resources/public/plugins/bs-custom/js/bs-custom.min.js'
+              - 'bundles/itfadmin/js/modernizr-2.8.3.min.js'
+              - 'bundles/itfadmin/js/respond.js'
+              - 'bundles/itfadmin/plugins/bs-custom/js/bs-custom.min.js'
               - 'bundles/alidatatable/js/jquery.dataTables.min.js'
               - 'bundles/alidatatable/js/dataTables.bootstrap.min.js'
+
+      admin_edit_css:
+          inputs:
+                - 'bundles/itfadmin/inspinia/css/plugins/dataTables/dataTables.bootstrap.css'
+                - 'bundles/itfadmin/inspinia/css/plugins/dataTables/dataTables.responsive.css'
+                - 'bundles/itfadmin/inspinia/css/plugins/dataTables/dataTables.tableTools.min.css'
+                - 'bundles/itfadmin/inspinia/css/plugins/select2/select2.min.css'
+                - 'bundles/itfadmin/inspinia/css/plugins/colorpicker/bootstrap-colorpicker.min.css'
+                - 'bundles/itfadmin/inspinia/css/plugins/datapicker/datepicker3.css'
+
+      admin_edit_js:
+          inputs:
+                - 'bundles/itfadmin/inspinia/js/plugins/dataTables/jquery.dataTables.js'
+                - 'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.bootstrap.js'
+                - 'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.responsive.js'
+                - 'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.tableTools.min.js'
+                - 'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.tableTools.min.js'
+                - 'bundles/itfadmin/inspinia/js/plugins/select2/select2.full.min.js'
+                - 'bundles/itfadmin/inspinia/js/plugins/colorpicker/bootstrap-colorpicker.min.js'
+                - 'bundles/itfadmin/inspinia/js/plugins/datapicker/bootstrap-datepicker.js'
 
       bootstrap_glyphicons_ttf:
           inputs:

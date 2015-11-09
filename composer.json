@@ -1,23 +1,25 @@
 {
-    "name" : "itf/admin-bundle",
-    "description" : "admin bundle",
-    "type" : "symfony-bundle",
-    "authors" : [{
-        "name" : "dennis senn",
-        "email" : "info@interface-f.com"
-    }],
-    "keywords" : [""],
-    "license" : [
-        "MIT"
-    ],
-    "require" : {
-        "php":                      ">=5.3.3",
-        "symfony/framework-bundle": "~2.0"
+    "name": "itf/admin-bundle",
+    "description": "symfony admin bundle",
+    "type": "library",
+    "require": {
+        "php": ">=5.3",
+        "symfony/symfony": ">=2.6",
+        "twig/twig": "^1.23",
+        "doctrine/orm": "~2.4@stable,>=2.1,<=2.5"
     },
-    "autoload" : {
-        "psr-0" : {
-            "ITF\\AdminBundle" : ""
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "interface-f gmbh",
+            "email": "info@interface-f.com"
         }
-    },
-    "target-dir" : "ITF/AdminBundle"
+    ],
+    "minimum-stability": "dev",
+    "target-dir": "ITF/AdminBundle",
+    "autoload": {
+        "psr-0": {
+            "ITF\\AdminBundle": ""
+        }
+    }
 }

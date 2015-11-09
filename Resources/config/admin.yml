@@ -54,3 +54,6 @@ stfalcon_tinymce:
                  - "paste preview"
              toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image | media preview code"
              image_advtab: true
+
+genemu_form:
+    select2: ~

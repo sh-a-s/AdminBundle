@@ -9,12 +9,17 @@
     {{ parent() }}
 
     {% stylesheets filter="cssrewrite"
-    'bundles/itfadmin/inspinia/css/plugins/dataTables/dataTables.bootstrap.css'
-    'bundles/itfadmin/inspinia/css/plugins/dataTables/dataTables.responsive.css'
-    'bundles/itfadmin/inspinia/css/plugins/dataTables/dataTables.tableTools.min.css'
+        '@admin_edit_css'
     %}
     <link rel="stylesheet" href="{{ asset_url }}" />
     {% endstylesheets %}
+{% endblock %}
+
+{% block stylesheet %}
+    {{ parent() }}
+
+    {# GenemuForm #}
+    {{ form_stylesheet(form) }}
 {% endblock %}
 
 {% block main_action_button %}
@@ -110,20 +115,15 @@
     {{ parent() }}
 
     {% javascripts
-        'bundles/itfadmin/inspinia/js/plugins/dataTables/jquery.dataTables.js'
-        'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.bootstrap.js'
-        'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.responsive.js'
-        'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.tableTools.min.js'
-        'bundles/itfadmin/inspinia/js/plugins/dataTables/dataTables.tableTools.min.js'
+        '@admin_edit_js'
     %}
     <script src="{{ asset_url }}"></script>
     {% endjavascripts %}
-
-    <script>
-        $(function() {
-            // tabs
-            $('.nav-tabs li:first-child, .tab-content .tab-pane:first-child').addClass('active');
-        });
-    </script>
 {% endblock %}
 
+{% block javascript %}
+    {{ parent() }}
+
+    {# GenemuForm #}
+    {{ form_javascript(form) }}
+{% endblock %}

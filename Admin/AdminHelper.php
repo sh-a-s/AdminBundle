@@ -3,6 +3,7 @@ namespace ITF\AdminBundle\Admin;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContextInterface;
@@ -10,7 +11,10 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 class AdminHelper
 {
 	protected $em;
+
+	/* @var Controller $container */
 	protected $container;
+
 	protected $bundle;
 	protected $bundle_name = '';
 	protected $bundles;
@@ -33,7 +37,7 @@ class AdminHelper
 	public function getBundles()
 	{
 		if (empty($this->bundles)) {
-			$this->bundles = $this->container->getParameter('kernel.bundles');
+			$this->bundles = $this->container->get('service_container')->getParameter('kernel.bundles');
 		}
 
 		return $this->bundles;
@@ -201,6 +205,7 @@ class AdminHelper
 		$meta = $this->getClassMetadata( $this->getEntityClassByName($entity) );
 
 		$entity_assoc = array();
+		//pre($meta->associationMappings);exit;
 		foreach ($meta->associationMappings as $assoc_name => $assoc_type) {
 			if ($assoc_type['mappedBy'] == $this->getEntityName($entity, 'lcfirst')) {
 
@@ -501,7 +506,9 @@ class AdminHelper
 		$datatable->setEntity($this->getEntityRepository($entity), $this->dtGetCharByEntity($entity));
 
 		// set fields
-		$datatable->setFields($this->getDatatablesListColumns($entity));
+		$fields = $this->getDatatablesListColumns($entity);
+		$fields_count = count($fields);
+		$datatable->setFields($fields);
 
 		// handle request
 		if (!empty($request)) {
@@ -519,19 +526,39 @@ class AdminHelper
 
 		// set renderer
 		$datatable->setRenderer(
-				function(&$data) {
-					foreach($data as $key => $value) {
+			function(&$data) {
+				foreach($data as $key => $value) {
+					// array
+					if (is_array($value)) {
+						$data[$key] = implode(', ', $value);
+					}
 
-						// datetime
-						if ($value instanceof \DateTime) {
-							$data[$key] = $value->format('d.m.Y');
-						}
+					// datetime
+					if ($value instanceof \DateTime) {
+						$data[$key] = $value->format('d.m.Y');
 					}
 				}
-			);
+			}
+		);
+
+		// set action renderer
+		$datatable->setRenderers(
+			array(
+				($fields_count - 1) => array(
+				//'_identifier_' => array(
+					'label' => '_identifier_',
+					'view' => '@ITFAdmin/Admin/helper/dt_renderer.html.twig',
+					'params' => array(
+						'edit_route' => 'admin_edit',
+						'bundle' => $this->getBundleNameShort(),
+						'entity' => $this->getEntityName($entity, 'strtolower')
+					)
+				)
+			)
+		);
 
 		// set search
-		//$datatable->setSearch(true);
+		$datatable->setSearch(true);
 
 		// set mass action
 		/*$datatable->setHasAction(true);
