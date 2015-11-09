@@ -4,9 +4,14 @@
     "type": "library",
     "require": {
         "php": ">=5.3",
-        "symfony/symfony": ">=2.6",
+        "symfony/symfony": "~2.6",
         "twig/twig": "^1.23",
-        "doctrine/orm": "~2.4@stable,>=2.1,<=2.5"
+        "doctrine/orm": "~2.4@stable,>=2.1,<=2.5",
+        "select2/select2": "^4.0",
+        "genemu/form-bundle": "^2.2",
+        "ali/datatable": "~2.0",
+        "jms/translation-bundle": "^1.1",
+        "twbs/bootstrap": "^3.3"
     },
     "license": "MIT",
     "authors": [
@@ -15,7 +20,6 @@
             "email": "info@interface-f.com"
         }
     ],
-    "minimum-stability": "dev",
     "target-dir": "ITF/AdminBundle",
     "autoload": {
         "psr-0": {
