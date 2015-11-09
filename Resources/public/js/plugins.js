@@ -1,5 +1,6 @@
 var colorpicker = $('.bs-colorpicker'),
-    datepicker = $('.bs-datepicker');
+    datepicker = $('.bs-datepicker'),
+    datetimepicker = $('.bs-datetimepicker');
 
 /**
  * if elems set loop through each
@@ -43,6 +44,15 @@ $(function() {
     // bs-datepicker
     seteach(datepicker, function(elem) {
         $(elem).datepicker({
+            format: getAttr($(elem), 'format')
+        });
+    });
+
+    // bs-datetimepicker
+    seteach(datetimepicker, function(elem) {
+        $(elem).datetimepicker({
+            calendarWeeks: true,
+            showTodayButton: true,
             format: getAttr($(elem), 'format')
         });
     });

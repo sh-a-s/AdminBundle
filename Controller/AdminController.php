@@ -57,6 +57,8 @@ class AdminController extends Controller
 	 */
     public function indexAction($bundle, $entity, $join_context = false, $context = array(), $table_id = 0, Request $request)
     {
+		//return new Response(var_dump($join_context));
+
         $ah = $this->get('itf.admin_helper');
         $ah->setBundle($bundle);
 
@@ -70,6 +72,7 @@ class AdminController extends Controller
 
         // switch template
         $template = 'ITFAdminBundle:Admin:index.html.twig';
+
         if ($join_context) {
             $template = 'ITFAdminBundle:Admin:datatable.html.twig';
         }

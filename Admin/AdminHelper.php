@@ -217,6 +217,8 @@ class AdminHelper
 			}
 		}
 
+		//pre($entity_assoc);exit;
+
 		return $entity_assoc;
 	}
 
@@ -237,6 +239,11 @@ class AdminHelper
 	public function getEntityInstance($entity)
 	{
 		$entity_class = $this->getEntityClassByName($entity);
+
+		if (!class_exists($entity_class)) {
+			throw new \Exception(sprintf("Class %c does not exist", $entity_class));
+		}
+
 		return new $entity_class();
 	}
 
