@@ -219,6 +219,8 @@ class AdminHelper
 			}
 		}
 
+		//pre($entity_assoc);exit;
+
 		return $entity_assoc;
 	}
 
