@@ -4,9 +4,11 @@ namespace ITF\AdminBundle\Admin;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Debug\Exception\ClassNotFoundException;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 class AdminHelper
 {
@@ -237,6 +239,11 @@ class AdminHelper
 	public function getEntityInstance($entity)
 	{
 		$entity_class = $this->getEntityClassByName($entity);
+
+		if (!class_exists($entity_class)) {
+			throw new \LogicException(sprintf("Class not found: %s", $entity_class));
+		}
+
 		return new $entity_class();
 	}
 
