@@ -22,7 +22,26 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('fields')
+                ->scalarNode('title')->end()
+                ->scalarNode('frontend_route')->end()
+                ->arrayNode('bundles')
+                    ->useAttributeAsKey('name')
+                    ->prototype('array')
+                        ->children()
+                            ->arrayNode('entities')
+                                ->useAttributeAsKey('name')
+                                ->prototype('array')
+                                    ->children()
+                                        ->scalarNode('title')->defaultFalse()->end()
+                                        ->scalarNode('icon')->defaultFalse()->end()
+                                        ->booleanNode('add_allowed')->defaultTrue()->end()
+                                    ->end()
+                                ->end()
+                            ->end()
+                            ->scalarNode('dashboard_service')->end()
+                        ->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 

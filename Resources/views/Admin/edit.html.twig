@@ -86,7 +86,7 @@
                     {% for assoc in entity_assoc|sort %}
                         <div role="tabpanel" class="tab-pane" id="{{ assoc.fieldName }}">
                             <div class="panel-body">
-                                {{ render(controller('ITFAdminBundle:Admin:index', {
+                                {{ render_esi(controller('ITFAdminBundle:Admin:index', {
                                     bundle: bundle,
                                     entity: assoc.fieldName|lower,
                                     join_context: true,

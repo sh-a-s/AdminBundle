@@ -4,6 +4,7 @@ namespace ITF\AdminBundle\Controller;
 
 use ITF\AdminBundle\Admin\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\Response;
 use ITF\UploadBundle\Upload\EntityUpload;
 use Sensio\Bundle\FrameworkExtraBundle\DependencyInjection\Configuration;
@@ -86,12 +87,27 @@ class AdminController extends Controller
 		));
     }
 
+	/**
+	 * @param $bundle
+	 *
+	 * @return Response
+	 */
     public function dashboardAction($bundle)
     {
+	    $ah = $this->get('itf.admin_helper');
+	    $ah->setBundle($bundle);
+
+	    // get dashboard service if available and wrap adapter
+		$dashboard = $this->get('itf.admin.factory')->createDashboardAdapter(
+			$this->get('itf.admin.config')->getDashboardService()
+		);
+
         return $this->render('ITFAdminBundle::admin_base.html.twig', array(
             'bundle' => $bundle,
             'entity' => NULL,
-            'entity_name' => NULL
+            'entity_name' => NULL,
+	        'dashboard_title' => $dashboard->getTitle(),
+		    'dashboard_html' => $dashboard->renderView()
         ));
     }
 
@@ -119,14 +135,14 @@ class AdminController extends Controller
 
         $em = $this->getDoctrine()->getManager();
 
-        $entity = new Entity($entity, $this);
+        $entity = new \ITF\AdminBundle\Admin\Entity($entity, $this);
         $form = $this->createActionForm($entity, 'add');
         $form->handleRequest($request);
 
         if ($form->isValid()) {
             // upload
-            $entityUpload = new EntityUpload($entity->getEntity());
-            $entityUpload->upload();
+            //$entityUpload = new EntityUpload($entity->getEntity());
+	        //$entityUpload->upload();
 
             $em->persist($entity->getEntity());
             $em->flush();
@@ -173,7 +189,7 @@ class AdminController extends Controller
         $ah = $this->get('itf.admin_helper');
         $ah->setBundle($bundle);
 
-        $entity = new Entity($entity, $this);
+        $entity = new \ITF\AdminBundle\Admin\Entity($entity, $this);
 
         // set request data
         $entity->setRequestData($request);
@@ -225,7 +241,7 @@ class AdminController extends Controller
 			$is_translatable = true;
         }
 
-        $entity = new Entity($entity, $this);
+        $entity = new \ITF\AdminBundle\Admin\Entity($entity, $this);
 
         if (!$entity) {
             throw $this->createNotFoundException(sprintf('Unable to find %e entity.', $entity->getName()));
@@ -276,7 +292,7 @@ class AdminController extends Controller
             $entity->setTranslatableLocale($entity_locale);
         }
 
-        $entity = new Entity($entity, $this);
+	    $entity = new \ITF\AdminBundle\Admin\Entity($entity, $this);
 
 		if (!$entity) {
 			throw $this->createNotFoundException(sprintf('Unable to find %e entity.', $entity->getName()));
@@ -288,10 +304,10 @@ class AdminController extends Controller
 
 		if ($form->isValid()) {
             // upload
-            $entityUpload = new EntityUpload($entity->getEntity());
-            $entityUpload->upload();
+			//$entityUpload = new EntityUpload($entity->getEntity());
+			//$entityUpload->upload();
 
-            //$em->persist($entity);
+            $em->persist($entity->getEntity());
 			$em->flush();
 
             // clear
@@ -399,7 +415,7 @@ class AdminController extends Controller
 		}
 
 		// create form
-		$form = $this->createForm(new $type_class(), $entity->getEntity(), array(
+		$form = $this->createForm(new $type_class($this->container), $entity->getEntity(), array(
 			'action' => $action,
 			'method' => $method,
 			'attr' => array(
@@ -447,7 +463,7 @@ class AdminController extends Controller
 	public function entityLanguageSwitchAction($bundle, $entity, $id)
 	{
 		$locales = array('en', 'de', 'fr', 'it');
-		$Entity = new Entity($entity, $this);
+		$Entity = new \ITF\AdminBundle\Admin\Entity($entity, $this);
 
 		$request = Request::createFromGlobals();
 		$current_locale = $request->get('locale');

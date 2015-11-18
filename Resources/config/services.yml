@@ -1,12 +1,28 @@
 services:
+    itf.admin.factory:
+        class: ITF\AdminBundle\Admin\AdminFactory
+
     itf.admin_helper:
         class:        ITF\AdminBundle\Admin\AdminHelper
         arguments:    [ "@doctrine.orm.entity_manager", "@service_container" ]
 
-#    JMSTranslationBundle_ui:
-#        resource: @JMSTranslationBundle/Controller/
-#        type:     annotation
-#        prefix:   /_trans
+    itf.admin.config:
+        class: ITF\AdminBundle\Admin\Configuration
+        arguments: [ @service_container ]
+
+    itf.admin.form.helper:
+        class: ITF\AdminBundle\Admin\Form\FormHelper
+        arguments: [ @service_container ]
+
+
+    # listener
+    itf.listener.orm.logger:
+        class: ITF\AdminBundle\EventListener\LoggingListener
+        calls:
+            - [ setContainer, [ @service_container ] ]
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+
 
     # KernelRequest listener
     extension.listener:

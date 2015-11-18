@@ -2,6 +2,7 @@
 namespace ITF\AdminBundle\Admin;
 
 use Doctrine\ORM\EntityManager;
+use ITF\AdminBundle\Entity\LogEntry;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Debug\Exception\ClassNotFoundException;
@@ -29,6 +30,9 @@ class AdminHelper
 	{
 		$this->em = $entityManager;
 		$this->container = $container;
+
+		// disable lifecycle callbacks for LogEntry
+		$this->em->getClassMetadata(get_class(new LogEntry()))->setLifecycleCallbacks(array());
 	}
 
 	public function getEntityManager()
@@ -243,7 +247,7 @@ class AdminHelper
 		$entity_class = $this->getEntityClassByName($entity);
 
 		if (!class_exists($entity_class)) {
-			throw new \LogicException(sprintf("Class not found: %s", $entity_class));
+			throw new \LogicException(sprintf('Class "%s" loaded by "%s" not found.', $entity_class, $entity));
 		}
 
 		return new $entity_class();
@@ -560,7 +564,8 @@ class AdminHelper
 					'params' => array(
 						'edit_route' => 'admin_edit',
 						'bundle' => $this->getBundleNameShort(),
-						'entity' => $this->getEntityName($entity, 'strtolower')
+						'entity' => $this->getEntityName($entity, 'strtolower'),
+						'has_edit' => class_exists($this->getEntityFormTypeClass($entity))
 					)
 				)
 			)
@@ -579,6 +584,10 @@ class AdminHelper
 					)
 				)
 			);*/
+
+		/** @var \Doctrine\ORM\QueryBuilder $qb */
+		/*$qb = $datatable->getQueryBuilder()->getDoctrineQueryBuilder();
+		dump($qb->getQuery()->getSQL());*/
 
 		return $datatable;
 	}

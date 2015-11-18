@@ -176,7 +176,9 @@ class Entity
 
 		if (is_string($entity)) {
 			$entity_class = $this->ah->getEntityClassByName($entity);
-			$entity = new $entity_class();
+			if ($entity_class) {
+				$entity = new $entity_class();
+			}
 
 			$this->entity_name = $this->ah->getEntityName($entity);
 		}
