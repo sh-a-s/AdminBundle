@@ -48,7 +48,6 @@ class LoggingListener implements EventSubscriber
 		$this->entity = $args->getObject();
 		$this->em = $args->getEntityManager();
 		$this->uow = $this->em->getUnitOfWork();
-
 	}
 
 	/**
@@ -74,7 +73,7 @@ class LoggingListener implements EventSubscriber
 			return implode(', ', $value);
 		}
 		elseif ($value instanceof \DateTime) {
-			return $value->format('dd.MM.yyyy HH:mm:ss');
+			return $value->format('d.m.Y H:i:s');
 		}
 		elseif (is_object($value)) {
 			if (method_exists($value, '__toString')) {

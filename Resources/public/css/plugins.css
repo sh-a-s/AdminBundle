@@ -1,0 +1,11 @@
+/* select2 */
+.select2-container {
+    width:auto !important;
+    display:block !important;
+}
+
+/* vich */
+.vich-image {
+    border: 1px solid #ECECEC;
+    padding: 6px 10px;
+}

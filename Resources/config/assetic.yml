@@ -12,7 +12,6 @@ assetic:
               - 'bundles/alidatatable/css/dataTables.bootstrap.min.css'
       admin_js:
           inputs:
-              - 'bundles/alidatatable/js/jquery.min.js'
               - 'bundles/itfadmin/js/modernizr-2.8.3.min.js'
               - 'bundles/itfadmin/js/respond.js'
               - 'bundles/itfadmin/plugins/bs-custom/js/bs-custom.min.js'

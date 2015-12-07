@@ -1,6 +1,5 @@
 {% extends 'ITFAdminBundle::admin_base.html.twig' %}
-
-{% form_theme form '@ITFAdmin/Admin/form_layout.html.twig' %}
+{% form_theme form '@ITFAdmin/Admin/forms/form_layout.html.twig' %}
 
 {% set _entity = app.request.get('entity') %}
 {% set _Entity = app.request.get('entity')|capitalize %}
@@ -50,19 +49,7 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    {{ form_start(form) }}
-
-                        {% for name, elem in form.children %}
-                            {% if name == 'submit' or name == 'submit_stay' %}
-                                <div class="display-inline-block">
-                                    {{ form_row(elem) }}
-                                </div>
-                            {% else %}
-                                {{ form_row(elem) }}
-                            {% endif %}
-                        {% endfor %}
-
-                    {{ form_end(form) }}
+                    {{ include('@ITFAdmin/Admin/forms/default.html.twig', {form: form}) }}
                 </div>
             </div>
         </div>
@@ -86,12 +73,13 @@
                     {% for assoc in entity_assoc|sort %}
                         <div role="tabpanel" class="tab-pane" id="{{ assoc.fieldName }}">
                             <div class="panel-body">
+
                                 {{ render_esi(controller('ITFAdminBundle:Admin:index', {
                                     bundle: bundle,
                                     entity: assoc.fieldName|lower,
                                     join_context: true,
                                     context: assoc.context,
-                                    table_id: 'dt-join-' ~ assoc.fieldName|lower
+                                    table_id: 'dt-join1-' ~ assoc.fieldName|lower
                                 })) }}
 
                                 <a class="display-inline-block btn btn-success" style="margin:10px 0;"

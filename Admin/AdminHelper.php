@@ -21,6 +21,7 @@ class AdminHelper
 	protected $bundle;
 	protected $bundle_name = '';
 	protected $bundles;
+	protected $entity;
 	protected $entities;
 	protected $entity_form_class_path = '\\Form\\Admin\\';
 	protected $datatable;
@@ -33,6 +34,11 @@ class AdminHelper
 
 		// disable lifecycle callbacks for LogEntry
 		$this->em->getClassMetadata(get_class(new LogEntry()))->setLifecycleCallbacks(array());
+	}
+
+	public function getRouter()
+	{
+		return $this->container->get('router');
 	}
 
 	public function getEntityManager()
@@ -60,6 +66,11 @@ class AdminHelper
 		}
 	}
 
+	public function setEntity($entity)
+	{
+		$this->entity = $entity;
+	}
+
 	public function getBundle()
 	{
 		return $this->bundle;
@@ -80,7 +91,7 @@ class AdminHelper
 		$entities = array();
 		$meta = $this->em->getMetadataFactory()->getAllMetadata();
 
-		/* @var \Doctrine\DBAL\Schema\Table $m */
+		/* @var \Doctrine\ORM\Mapping\ClassMetadata $m */
 		foreach ($meta as $m) {
 			$_entity = $m->getName();
 
@@ -107,6 +118,66 @@ class AdminHelper
 		}
 
 		return $this->entities;
+	}
+
+	public function getEntityInfo($entity)
+	{
+		$entity = str_replace('\\', '\\\\', $entity);
+
+		$info = array(
+			'entity_short' => NULL,
+			'entity_fq' => NULL,
+			'query' => $entity,
+			'bundle' => NULL,
+			'bundle_short' => NULL,
+			'namespace' => NULL,
+			'repository' => NULL,
+		);
+
+		$meta = $this->em->getMetadataFactory()->getAllMetadata();
+
+		/* @var \Doctrine\ORM\Mapping\ClassMetadata $m */
+		foreach ($meta as $m) {
+			//pre($m);
+			$name = $m->getName();
+			if (preg_match('/'.$entity.'/i', $name)) {
+				$rfl = $m->getReflectionClass();
+
+				preg_match('/^((.*?)Bundle)/', $name, $match);
+
+				$info['entity_fq'] = $name;
+				$info['entity_short'] = str_replace($rfl->getNamespaceName() . '\\', '', $name);
+				$info['bundle'] = $match[1];
+				$info['bundle_short'] = strtolower($match[2]);
+				$info['namespace'] = $rfl->getNamespaceName();
+				$info['repository'] = $info['bundle'] . ':' . $info['entity_short'];
+
+				return $info;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * @param $bundle
+	 * @param $entity
+	 *
+	 * @return false|object
+	 */
+	public function getEntityInstanceByParam($bundle, $entity)
+	{
+		$meta = $this->em->getMetadataFactory()->getAllMetadata();
+
+		/* @var \Doctrine\ORM\Mapping\ClassMetadata $m */
+		foreach($meta as $m) {
+			$_entity = $m->getName();
+			if (preg_match('/'.$bundle.'.*?'.$entity.'/i', $_entity)) {
+				return new $_entity();
+			}
+		}
+
+		return false;
 	}
 
 	public function getEntityClassByName($name)
@@ -178,6 +249,11 @@ class AdminHelper
 		}
 
 		return $bundle . ":" . $this->getEntityName($entity);
+	}
+
+	public function getEntityRepositoryReference($entity, $bundle = NULL)
+	{
+		return $this->getEntityManager()->getRepository($this->getEntityRepository($entity, $bundle));
 	}
 
 	protected function getClassMetadata($class)
@@ -590,5 +666,18 @@ class AdminHelper
 		dump($qb->getQuery()->getSQL());*/
 
 		return $datatable;
+	}
+
+	/* routing */
+	public function getEditPath($id, $entity = NULL, $bundle = NULL)
+	{
+		if (empty($entity)) $entity = $this->entity;
+		if (empty($bundle)) $bundle = $this->getBundleNameShort();
+
+		return $this->getRouter()->generate('admin_edit', array(
+			'id' => $id,
+			'entity' => $entity,
+			'bundle' => $bundle
+		));
 	}
 }

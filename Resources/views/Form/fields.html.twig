@@ -1,0 +1,171 @@
+{% block fineuploader_widget %}
+    {#{{ dump() }}#}
+    {#{{ dump(fn_template) }}
+    {{ dump(fn_file_limit) }}
+    {{ dump(fn_bundle) }}
+    {{ dump(fn_entity) }}
+    {{ dump(fn_property) }}#}
+
+    {# check if id set #}
+    {% if fn_entity_id == 0 %}
+        <br><i class="fa fa-info-circle"></i> You have to save this entry first to upload images. Press "Create" and start uploading.
+    {% else %}
+
+        {# assets: default #}
+        {% if fn_template == 'default' %}
+            <link rel="stylesheet" href="{{ asset('bundles/itfadmin/plugins/fineuploader/5.4.1/fine-uploader-new.css') }}" />
+            {{ include('@ITFAdmin/Form/fineuploader/default.html.twig') }}
+
+        {# assets: gallery #}
+        {% elseif fn_template == 'gallery' %}
+            <link rel="stylesheet" href="{{ asset('bundles/itfadmin/plugins/fineuploader/5.4.1/fine-uploader-gallery.css') }}" />
+            {{ include('@ITFAdmin/Form/fineuploader/gallery.html.twig') }}
+        {% endif %}
+
+        <script src="{{ asset('bundles/itfadmin/plugins/fineuploader/5.4.1/jquery.fine-uploader.js') }}"></script>
+
+        {# wrapper #}
+        <div id="fine-uploader"></div>
+
+        {# generate paths #}
+        <script>
+            if (typeof session_path === 'undefined') {
+                var session_path = '{{ path('vi_fineuploader_list', { bundle: fn_bundle, entity: fn_entity, property: fn_property, id: fn_entity_id }) }}';
+            }
+
+            if (typeof request_path === 'undefined') {
+                var request_path = '{{ path('vi_fineuploader_upload', { bundle: fn_bundle, entity: fn_entity, property: fn_property, id: fn_entity_id }) }}';
+            }
+
+            if (typeof delete_path === 'undefined') {
+                var delete_path = '{{ path('vi_fineuploader_delete', { bundle: fn_bundle, entity: fn_entity, property: fn_property, id: fn_entity_id }) }}';
+            }
+        </script>
+
+        {# script #}
+        <script>
+            var fn_file_limit = {{ fn_file_limit }},
+                multiple = false,
+                fn_files = [],
+                fineuploader_wrapper = $('#fine-uploader');
+
+            // multiple
+            if (fn_file_limit > 1) multiple = true;
+
+            var uploader = fineuploader_wrapper.fineUploader({
+                debug: true,
+                autoUpload: true,
+                multiple: multiple,
+                session: {
+                    endpoint: session_path
+                },
+                request: {
+                    endpoint: request_path
+                },
+                deleteFile: {
+                    enabled: false
+                },
+                retry: {
+                    enableAuto: false
+                },
+                validation: {
+                    itemLimit: fn_file_limit
+                },
+                callbacks: {
+                    onComplete: function(id, name, responseJSON, xhr) {
+                        if (responseJSON.success == true) {
+                            fn_files[id] = responseJSON;
+                        } else {
+                            alert(responseJSON.error);
+                        }
+
+                        console.log(fn_files);
+                    },
+                    onDelete: function(id) {
+                        console.log({info: fn_files[id]});
+                        this.setDeleteFileParams({info: fn_files[id]}, id);
+                    },
+                    onSessionRequestComplete: function(response, success, xhr) {
+                        fn_files = response;
+                    },
+                    onError: function(id, name, errorReason, xhr) {
+                        /*alert(err)*/
+                    }
+                }
+            });
+
+            // getRemainingAllowedItems ()
+
+            fineuploader_wrapper.on('click', '.qq-upload-delete', function(e) {
+                var target = $(e.target).closest('li'),
+                    index = target.index();
+
+                // config
+                var config = fn_files[ index ];
+
+                console.log('config.name', config.name);
+                console.log('index', index);
+
+                $.ajax({
+                    url: delete_path,
+                    data: { filename: config.name },
+                    cache: false,
+                    method: 'DELETE',
+                    //contentType: 'json',
+                    beforeSend: function() {},
+                    success: function(result) {
+                        if (result.success == true) {
+                            uploader.fineUploader('cancel', index);
+                        } else {
+
+                        }
+                    },
+                    error: function() {
+                        console.error('error deleting');
+                    }
+                })
+            });
+
+            //console.log('allowed', );
+
+            /*qq(document.getElementById("trigger-upload")).attach("click", function() {
+                uploader.uploadStoredFiles();
+            });*/
+        </script>
+    {% endif %}
+
+{% endblock %}
+
+{% block fineuploader_multiple_widget %}
+
+    <script>
+        var session_path = '{{ path('vi_fineuploader_list', {
+            bundle: fn_bundle,
+            entity: fn_entity,
+            property: fn_entity_property,
+            id: fn_entity_id,
+            fk_entity: fn_fk_entity,
+            fk_bundle: fn_fk_bundle
+        }) }}';
+
+        var request_path = '{{ path('vi_fineuploader_upload', {
+            bundle: fn_bundle,
+            entity: fn_entity,
+            property: fn_entity_property,
+            id: fn_entity_id,
+            fk_entity: fn_fk_entity,
+            fk_bundle: fn_fk_bundle
+        }) }}';
+
+        var delete_path = '{{ path('vi_fineuploader_delete', {
+            bundle: fn_bundle,
+            entity: fn_entity,
+            property: fn_entity_property,
+            id: fn_entity_id,
+            fk_entity: fn_fk_entity,
+            fk_bundle: fn_fk_bundle
+        }) }}';
+    </script>
+
+    {{ block('fineuploader_widget') }}
+{% endblock %}

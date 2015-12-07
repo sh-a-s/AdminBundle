@@ -18,12 +18,13 @@
 
     {% block stylesheet %}
         {% stylesheets filter="cssrewrite"
-            '@ITFAdminBundle/Resources/public/css/admin.css'
-            '@ITFAdminBundle/Resources/public/css/helper.css'
+            '@ITFAdminBundle/Resources/public/css/*'
         %}
         <link rel="stylesheet" href="{{ asset_url }}" />
         {% endstylesheets %}
     {% endblock %}
+
+    <script src="{{ asset('bundles/alidatatable/js/jquery.min.js') }}"></script>
 </head>
 <body class="fixed-sidebar">
     <div id="wrapper">
@@ -62,7 +63,7 @@
             </div>
             <div class="row wrapper border-bottom white-bg page-heading">
                 <div class="col-sm-4">
-                    <h2>{% block admin_title %}Admin Dashboard{% endblock %}</h2>
+                    <h2>{% block admin_title %}{{ dashboard_title }}{% endblock %}</h2>
                     <ol class="breadcrumb">
                         <li>
                             <a href="index.html">Home</a>
@@ -75,7 +76,7 @@
                 <div class="col-sm-8">
                     <div class="title-action">
                         {% block main_action_button %}
-                        <!--<a href="" class="btn btn-primary">This is action area</a>-->
+
                         {% endblock %}
                     </div>
                 </div>
@@ -83,8 +84,8 @@
 
             <div class="wrapper wrapper-content">
                 {% block content %}
-                <div class="middle-box text-center">
-                </div>
+                    {{ dashboard_html }}
+                    {#<div class="middle-box text-center"></div>#}
                 {% endblock %}
             </div>
             <div class="footer">

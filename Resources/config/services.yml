@@ -14,15 +14,37 @@ services:
         class: ITF\AdminBundle\Admin\Form\FormHelper
         arguments: [ @service_container ]
 
+    itf.admin.annotation_reader:
+        class: ITF\AdminBundle\Admin\AnnotationReader
+
+    itf.admin.gedmo.tree:
+        class: ITF\AdminBundle\Admin\Tree\GedmoTree
+        arguments: [ @itf.admin_helper ]
+
 
     # listener
-    itf.listener.orm.logger:
-        class: ITF\AdminBundle\EventListener\LoggingListener
+    #itf.listener.orm.logger:
+    #    class: ITF\AdminBundle\EventListener\LoggingListener
+    #    calls:
+    #        - [ setContainer, [ @service_container ] ]
+    #    tags:
+    #        - { name: doctrine.event_subscriber, connection: default }
+
+
+    # form
+    itf.admin.form.type.fineuploader:
+        class: ITF\AdminBundle\Form\Type\FineuploaderType
         calls:
             - [ setContainer, [ @service_container ] ]
         tags:
-            - { name: doctrine.event_subscriber, connection: default }
+            - { name: form.type, alias: fineuploader }
 
+    itf.admin.form.type.fineuploader_multiple:
+        class: ITF\AdminBundle\Form\Type\FineuploaderMultipleType
+        calls:
+            - [ setContainer, [ @service_container ] ]
+        tags:
+            - { name: form.type, alias: fineuploader_multiple }
 
     # KernelRequest listener
     extension.listener:
@@ -47,6 +69,13 @@ services:
 
     gedmo.listener.sluggable:
         class: Gedmo\Sluggable\SluggableListener
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+        calls:
+            - [ setAnnotationReader, [ "@annotation_reader" ] ]
+
+    gedmo.listener.tree:
+        class: Gedmo\Tree\TreeListener
         tags:
             - { name: doctrine.event_subscriber, connection: default }
         calls:

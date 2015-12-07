@@ -34,8 +34,8 @@
                     {{ include('ITFAdminBundle:Admin:datatable.html.twig', {
                         'table_id': table_id,
                         'bundle': bundle,
-                        'entity': entity,
-                        'context': context
+                        'entity': entity_name,
+                        'context': context|default("")
                     }) }}
                 </div>
             </div>

@@ -1,0 +1,13 @@
+{{ form_start(form) }}
+
+    {% for name, elem in form.children %}
+        {% if name == 'submit' or name == 'submit_stay' %}
+            <div class="display-inline-block">
+                {{ form_row(elem) }}
+            </div>
+        {% else %}
+            {{ form_row(elem) }}
+        {% endif %}
+    {% endfor %}
+
+{{ form_end(form) }}
