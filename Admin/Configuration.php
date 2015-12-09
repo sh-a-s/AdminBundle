@@ -1,7 +1,7 @@
 <?php
 namespace ITF\AdminBundle\Admin;
 
-use AppBundle\Library\PN\AbstractServiceSetter;
+use ITF\AdminBundle\Admin\Service\AbstractServiceSetter;
 use ITF\AdminBundle\Admin\Dashboard\DashboardInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\DependencyInjection\ContainerInterface;

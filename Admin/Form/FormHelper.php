@@ -1,8 +1,8 @@
 <?php
 namespace ITF\AdminBundle\Admin\Form;
 
-use AppBundle\Library\PN\AbstractServiceSetter;
-use JMS\Serializer\Exception\LogicException;
+use ITF\AdminBundle\Admin\Service\AbstractServiceSetter;
+use Symfony\Component\DependencyInjection\Exception\LogicException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 

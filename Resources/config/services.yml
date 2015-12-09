@@ -21,6 +21,10 @@ services:
         class: ITF\AdminBundle\Admin\Tree\GedmoTree
         arguments: [ @itf.admin_helper ]
 
+    itf.admin.asset:
+        class: ITF\AdminBundle\Admin\Upload\Asset
+        arguments: [ @service_container ]
+
 
     # listener
     #itf.listener.orm.logger:
