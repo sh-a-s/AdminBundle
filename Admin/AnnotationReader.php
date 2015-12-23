@@ -33,4 +33,9 @@ class AnnotationReader
 
 		return false;
 	}
+
+	public function isTree($class)
+	{
+		return $class instanceof \ITF\AdminBundle\Admin\Tree\TreeInterface;
+	}
 }

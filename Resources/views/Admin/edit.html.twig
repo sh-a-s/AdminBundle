@@ -35,67 +35,13 @@
 {% block admin_title %}Edit {{ _Entity }}{% endblock %}
 
 {% block content %}
-
-    {# if translatable #}
-    {% if entity_translatable == true %}
-        {{ render(controller('ITFAdminBundle:Admin:entityLanguageSwitch', {
-            'bundle': bundle,
-            'entity': entity,
-            'id': app.request.get('id')
-        })) }}
-    {% endif %}
-
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="ibox float-e-margins">
-                <div class="ibox-content">
-                    {{ include('@ITFAdmin/Admin/forms/default.html.twig', {form: form}) }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    {{ tinymce_init() }}
-
-    {% if entity_assoc|length > 0 %}
-    <div class="row">
-        <div class="col-lg-12">
-            <div class="tabs-container">
-                <ul class="nav nav-tabs">
-                {% for assoc in entity_assoc|sort %}
-                    <li role="presentation">
-                        <a href="#{{ assoc.fieldName }}" role="tab" data-toggle="tab">{{ assoc.fieldName }}</a>
-                    </li>
-                {% endfor %}
-                </ul>
-
-                <div class="tab-content">
-                    {% for assoc in entity_assoc|sort %}
-                        <div role="tabpanel" class="tab-pane" id="{{ assoc.fieldName }}">
-                            <div class="panel-body">
-
-                                {{ render_esi(controller('ITFAdminBundle:Admin:index', {
-                                    bundle: bundle,
-                                    entity: assoc.fieldName|lower,
-                                    join_context: true,
-                                    context: assoc.context,
-                                    table_id: 'dt-join1-' ~ assoc.fieldName|lower
-                                })) }}
-
-                                <a class="display-inline-block btn btn-success" style="margin:10px 0;"
-                                   href="{{ path('admin_new', {entity: assoc.fieldName|lower, bundle: bundle}) }}?{{ entity_name }}={{ entity.id }}"
-                                   target="_blank">
-
-                                    add {{ assoc.fieldName }}
-                                </a>
-                            </div>
-                        </div>
-                    {% endfor %}
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
+    {{ include('@ITFAdmin/Admin/edit.content.html.twig', {
+        bundle: bundle,
+        entity: entity,
+        entity_assoc: entity_assoc,
+        form: form,
+        entity_translatable: entity_translatable
+    }) }}
 {% endblock %}
 
 

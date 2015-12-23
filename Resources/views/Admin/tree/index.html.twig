@@ -23,17 +23,22 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-5">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>Verzeichnis</h5>
+                    <div class="ibox-tools">
+                        <a href="#" data-action="add" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add</a>
+                    </div>
                 </div>
                 <div class="ibox-content">
-                    {{ tree_html|raw }}
+                    <div class="dd nested-sortable" id="nestable-mirror" data-bundle="{{ bundle }}" data-entity="{{ _entity }}">
+                        {{ tree_html|raw }}
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-lg-8">
+        <div class="col-lg-7">
             <div class="ibox float-e-margins">
                 {#<div class="ibox-title">
                     <h5>Basic Data Tables example with responsive plugin</h5>
@@ -51,6 +56,9 @@
     {{ parent() }}
 
     {% javascripts
+
+        'bundles/itfadmin/inspinia/js/jquery-ui-1.10.4.min.js'
+        '@ITFAdminBundle/Resources/public/inspinia/js/plugins/nestable/jquery.mjs.nestedSortable.js'
 
     %}
     <script src="{{ asset_url }}"></script>

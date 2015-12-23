@@ -17,9 +17,13 @@ services:
     itf.admin.annotation_reader:
         class: ITF\AdminBundle\Admin\AnnotationReader
 
-    itf.admin.gedmo.tree:
-        class: ITF\AdminBundle\Admin\Tree\GedmoTree
-        arguments: [ @itf.admin_helper ]
+    itf.admin.tree:
+        class: ITF\AdminBundle\Admin\Tree\Tree
+        arguments: [ @service_container ]
+
+#    itf.admin.gedmo.tree.form:
+#        class: ITF\AdminBundle\Admin\Tree\GedmoTreeForm
+#        #arguments: [ @itf.admin_helper ]
 
     itf.admin.asset:
         class: ITF\AdminBundle\Admin\Upload\Asset
@@ -27,12 +31,12 @@ services:
 
 
     # listener
-    #itf.listener.orm.logger:
-    #    class: ITF\AdminBundle\EventListener\LoggingListener
-    #    calls:
-    #        - [ setContainer, [ @service_container ] ]
-    #    tags:
-    #        - { name: doctrine.event_subscriber, connection: default }
+    itf.listener.orm.logger:
+        class: ITF\AdminBundle\EventListener\LoggingListener
+        calls:
+            - [ setContainer, [ @service_container ] ]
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
 
 
     # form

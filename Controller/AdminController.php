@@ -68,6 +68,8 @@ class AdminController extends Controller
 		$ah->setEntity($entity);
 		$entity_instance = $ah->getEntityInstance($entity);
 
+		$ah->disableProfiler();
+
 		// setup return
 		$response = ControllerResponse::create($this)
 			->setBundle($ah->getBundleNameShort())
@@ -77,13 +79,12 @@ class AdminController extends Controller
 		;
 
 		// if tree
-		if ($this->get('itf.admin.annotation_reader')->isGedmoTree($entity_instance)) {
-			/* @var \Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo */
+		if ($this->get('itf.admin.annotation_reader')->isTree($entity_instance)) {
 			$repo = $ah->getEntityRepositoryReference($entity);
 
 			// add tree to return array
 			$response
-				->setTreeHtml($this->get('itf.admin.gedmo.tree')->getTreeListHTML($repo))
+				->setTreeHtml($this->get('itf.admin.tree')->getTreeListHTML($repo))
 				->setTemplate('@ITFAdmin/Admin/tree/index.html.twig')
 			;
 
@@ -174,6 +175,13 @@ class AdminController extends Controller
 
 		// if valid
 		if ($form->isValid()) {
+			// if tree
+			/*if ($this->get('itf.admin.annotation_reader')->isGedmoTree($entity->getEntity())) {
+				dump($form->getData());
+
+				exit;
+			}*/
+
 			$em->persist($entity->getEntity());
 			$em->flush();
 			$em->clear();
@@ -294,16 +302,6 @@ class AdminController extends Controller
 		;
 
 		return $response->createResponse();
-
-		/*return $this->render('ITFAdminBundle:Admin:edit.html.twig', array(
-			'entity'      => $entity->getEntity(),
-			'bundle'      => $ah->getBundleNameShort(),
-			'form'        => $form->createView(),
-			'delete_form' => $deleteForm->createView(),
-			'entity_assoc'=> $entity->getEntityAssociations(),
-			'entity_name' => $entity->getName('strtolower'),
-			'entity_translatable' => $is_translatable
-		));*/
 	}
 
 
@@ -467,6 +465,14 @@ class AdminController extends Controller
 				'type' => $type
 			)
 		));
+
+		// if tree add root
+		if ($this->get('itf.admin.annotation_reader')->isGedmoTree($entity->getEntity())) {
+			/* @var \Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo */
+			$repo = $ah->getEntityRepositoryReference($entity->getName());
+
+			$this->get('itf.admin.gedmo.tree.form')->handleFormNew($form, $repo, $entity->getFQClassName());
+		}
 
 		$form->add('submit_stay', 'submit', array(
 			'label' => $submit_label,
