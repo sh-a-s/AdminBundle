@@ -54,6 +54,27 @@ services:
         tags:
             - { name: form.type, alias: fineuploader_multiple }
 
+    itf.admin.form.type.selectize:
+        class: ITF\AdminBundle\Form\Type\SelectizeType
+        #calls:
+        #    - [ setContainer, [ @service_container ] ]
+        tags:
+            - { name: form.type, alias: selectize }
+
+    itf.admin.form.type.selectize.tree:
+        class: ITF\AdminBundle\Form\Type\SelectizeTreeType
+        calls:
+            - [ setContainer, [ @service_container ] ]
+        tags:
+            - { name: form.type, alias: selectize_tree }
+
+    itf.admin.form.type.selectize.tags:
+        class: ITF\AdminBundle\Form\Type\SelectizeTagType
+        #calls:
+        #    - [ setContainer, [ @service_container ] ]
+        tags:
+            - { name: form.type, alias: selectize_tags }
+
     # KernelRequest listener
     extension.listener:
         class: ITF\AdminBundle\EventListener\DoctrineExtensionListener

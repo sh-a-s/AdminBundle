@@ -23,6 +23,14 @@ abstract class AdminAbstractType extends AbstractType
 		$this->form_helper = $this->getContainer()->get('itf.admin.form.helper');
 	}
 
+	/**
+	 * @return \Doctrine\ORM\EntityManager
+	 */
+	public function getEntityManager()
+	{
+		return $this->container->get('doctrine.orm.default_entity_manager');
+	}
+
 	public function getFormHelper()
 	{
 		return $this->form_helper;

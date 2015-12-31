@@ -2,53 +2,81 @@
 namespace ITF\AdminBundle\Admin\Tree;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\Entity;
 use ITF\AdminBundle\Admin\Service\AbstractServiceSetter;
 use ITF\AdminBundle\Admin\Tree\TreeInterface;
 
 class Tree extends AbstractServiceSetter
 {
-	private $list_type = 'ol';
+	private $tree_url_function;
+
+
 
 
 	/**
 	 * @param EntityRepository $repository
 	 *
+	 * @param array $criteria
+	 * @param array $order_by
+	 * @param null $limit
+	 * @param null $offset
+	 *
 	 * @return TreeInterface[] array
 	 */
-	public function getNodes(EntityRepository $repository)
+	public function getNodes(EntityRepository $repository, $criteria = array(), $order_by = array('lft' => 'ASC'), $limit = NULL, $offset = NULL)
 	{
-		return $repository->findBy(array(), array('lft' => 'ASC'));
+		return $repository->findBy($criteria, $order_by, $limit, $offset);
 	}
 
 
 	/**
 	 * @param EntityRepository $repository
 	 *
+	 * @param int $active_id
+	 *
 	 * @return string
 	 */
-	public function getTreeListHTML(EntityRepository $repository)
+	public function getTreeListHTML(EntityRepository $repository, $active_id = 0)
 	{
 		$entries = $this->getNodes($repository);
 
-		return $this->generateListHTML($entries, null);
+		if ($active_id == 0) {
+			$active_id = (int) $this->getRequest()->attributes->get('id');
+		}
+
+		return $this->generateListHTML($entries, null, $active_id);
 	}
 
 
 	/**
 	 * @param TreeInterface[] $entries
 	 * @param $level
+	 * @param int $active_id
+	 * @param null $edit_path_func
 	 *
 	 * @return string
 	 */
-	public function generateListHTML($entries, $level)
+	public function generateListHTML($entries, $level, $active_id = 0, $edit_path_func = NULL)
 	{
 		$html = '';
 
 		foreach($entries as $entry) {
 			if ($entry->getParentId() == $level ) {
-				$html .= '<li class="dd-item" id="item_' . $entry->getId() . '" data-id="' . $entry->getId() . '">';
-				$html .= '<div class="dd-handle drag"><a class="sortable-label" href="#">' . $entry->getLabel() . '</a></div>';
-				$html .= $this->generateListHTML($entries, $entry->getId());
+				$id = $entry->getId();
+
+				if ($edit_path_func instanceof \Closure) {
+					$edit_path = $edit_path_func($entry);
+				} else {
+					$edit_path = $this->getContainer()->get('itf.admin_helper')->getEditPath($id);
+				}
+
+				$active = $id == $active_id
+					? 'dd-active'
+					: null;
+
+				$html .= '<li class="dd-item ' .$active. '" id="item_' . $id . '" data-id="' . $id . '">';
+				$html .= '<div class="dd-handle drag"><a class="sortable-label" href="'.$edit_path.'">' . $entry->getLabel() . '</a></div>';
+				$html .= $this->generateListHTML($entries, $id, $active_id);
 				$html .= '</li>';
 			}
 		}
@@ -60,11 +88,17 @@ class Tree extends AbstractServiceSetter
 	/**
 	 * @param EntityRepository $repository
 	 *
+	 * @param null $nodes
+	 *
 	 * @return array
 	 */
-	public function getTree(EntityRepository $repository)
+	public function getTree(EntityRepository $repository, $nodes = null)
 	{
-		$entries = $this->getNodes($repository);
+		if ($nodes === NULL) {
+			$entries = $this->getNodes($repository);
+		} else {
+			$entries = $nodes;
+		}
 
 		$stack = array();
 		$arraySet = array();
@@ -81,7 +115,7 @@ class Tree extends AbstractServiceSetter
 				$link =& $link[$stack[$i]['index']]["children"]; //navigate to the proper children array
 			}
 			$tmp = array_push($link, array(
-				'item' => $entry,
+				'item' => $this->treeInterfaceObjectToArray($entry),
 				'children' => array()
 			));
 			array_push($stack, array(
@@ -91,6 +125,33 @@ class Tree extends AbstractServiceSetter
 		}
 
 		return $arraySet;
+	}
+
+	public function getFlatTree(EntityRepository $repository, $nodes = null)
+	{
+		if ($nodes === NULL) {
+			$entries = $this->getNodes($repository);
+		} else {
+			$entries = $nodes;
+		}
+
+		foreach($entries as $key => $entry) {
+			$entries[$key] = $this->treeInterfaceObjectToArray($entry);
+		}
+
+		return $entries;
+	}
+
+	protected function treeInterfaceObjectToArray(TreeInterface $entry)
+	{
+		return array(
+			'id' => $entry->getId(),
+			'label' => $entry->getLabel(),
+			'lft' => $entry->getLft(),
+			'rgt' => $entry->getRgt(),
+			'depth' => $entry->getDepth(),
+			'parent_id' => $entry->getParentId()
+		);
 	}
 
 	public function saveState($nodesArray, EntityRepository $repository)
@@ -124,5 +185,147 @@ class Tree extends AbstractServiceSetter
 			$em->persist($entry);
 			$em->flush();
 		}
+	}
+
+	public function deleteElement(TreeInterface $entry, EntityRepository $repository)
+	{
+		$em = $this->getEntityManager();
+		$qb = $repository->createQueryBuilder('a');
+		$queries = array();
+		$params = array(
+			'lft' => $entry->getLft(),
+			'rgt' => $entry->getRgt()
+		);
+
+		// if has children
+		if ($entry->getRgt() - $entry->getLft() > 1) {
+			$queries[] = $qb
+				->delete()
+				->where('a.lft BETWEEN :lft AND :rgt')
+				->setParameters($params)
+				->getQuery()
+			;
+
+			// update lft
+			$qb
+				->update()
+				->set('a.lft', 'a.lft - :diff')
+				->where('a.lft > :rgt')
+				->setParameters(array(
+					'rgt' => $entry->getRgt(),
+					'diff' => round($entry->getRgt() - $entry->getLft() + 1)
+				))
+				->getQuery()
+			;
+
+			// update rgt
+			$queries[] = $qb
+				->update()
+				->set('a.rgt', 'a.rgt - :diff')
+				->where('a.rgt > :rgt')
+				->setParameters(array(
+					'rgt' => $entry->getRgt(),
+					'diff' => round($entry->getRgt() - $entry->getLft() + 1)
+				))
+				->getQuery()
+			;
+		}
+
+		foreach($queries as $query) {
+			/* @var \Doctrine\ORM\Query $query */
+			$query->getResult();
+		}
+
+		$em->remove($entry);
+		$em->flush();
+	}
+
+	/**
+	 * @param $id
+	 * @param EntityRepository $repository
+	 *
+	 * @return bool
+	 */
+	public function addElement($id = 0, EntityRepository $repository)
+	{
+		$em = $this->getEntityManager();
+		$qb = $repository->createQueryBuilder('a');
+		$class = $repository->getClassName();
+
+		/* @var TreeInterface $entry */
+		$entry = new $class();
+		$entry->setLabel('New');
+
+		if ($id == 0) {
+			// get max_right
+			$query = $qb
+				->select('MAX(a.rgt) as max_rgt')
+				->getQuery()
+				->getSingleResult()
+			;
+
+			if (isset($query['max_rgt'])) {
+				$lft = $query['max_rgt'];
+				$rgt = $lft + 1;
+
+				/* @var TreeInterface $entry */
+				$entry = new $class();
+				$entry
+					->setLft($lft)
+					->setRgt($rgt)
+					->setDepth(1)
+				;
+
+				$em->persist($entry);
+				$em->flush();
+
+				return $entry->getId();
+			}
+
+		// add to parent
+		} else {
+			/* @var TreeInterface|NULL $parent */
+			$parent = $repository->find($id);
+			$queries = array();
+
+			if ($parent !== NULL) {
+				$lft = $parent->getRgt();
+				$rgt = $lft + 1;
+
+				// update rgt
+				$qb
+					->update()
+					->set('a.rgt', 'a.rgt + 2')
+					->where('a.rgt >= :lft')
+					->setParameter('lft', $lft)
+					->getQuery()
+				;
+
+				// update lft
+				$qb
+					->update()
+					->set('a.lft', 'a.lft + 2')
+					->where('a.rgt > :lft')
+					->setParameter('lft', $lft)
+					->getQuery()
+					->getResult()
+				;
+
+				// set entry
+				$entry
+					->setLft($lft)
+					->setRgt($rgt)
+					->setParent($parent)
+					->setDepth($parent->getDepth() + 1)
+				;
+
+				$em->persist($entry);
+				$em->flush();
+
+				return $entry->getId();
+			}
+		}
+
+		return false;
 	}
 }

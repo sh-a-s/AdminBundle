@@ -68,7 +68,7 @@ class AdminController extends Controller
 		$ah->setEntity($entity);
 		$entity_instance = $ah->getEntityInstance($entity);
 
-		$ah->disableProfiler();
+		//$ah->disableProfiler();
 
 		// setup return
 		$response = ControllerResponse::create($this)
@@ -220,6 +220,7 @@ class AdminController extends Controller
 		$ah = $this->get('itf.admin_helper');
 		$ah->setBundle($bundle);
 		$ah->setEntity($entity);
+		$entity_config = $this->get('itf.admin.config')->getEntityConfig();
 
 		// setup response
 		$response = ControllerResponse::create($this)
@@ -235,6 +236,11 @@ class AdminController extends Controller
 		// get form
 		$form = $this->createActionForm($entity, 'add');
 		$response->setForm($form->createView());
+
+		// if template set
+		if (isset($entity_config['template']['new'])) {
+			$response->setTemplate($entity_config['template']['new']);
+		}
 
 		return $response->createResponse();
 	}
@@ -264,6 +270,7 @@ class AdminController extends Controller
 		$ah = $this->get('itf.admin_helper');
 		$ah->setBundle($bundle);
 		$ah->setEntity($entity);
+		$entity_config = $this->get('itf.admin.config')->getEntityConfig();
 
 		// setup reponse
 		$response = ControllerResponse::create($this)
@@ -300,6 +307,22 @@ class AdminController extends Controller
 			->setEntityAssoc($entity->getEntityAssociations())
 			->setEntityTranslatable($is_translatable)
 		;
+
+		// if tree
+		if ($this->get('itf.admin.annotation_reader')->isTree($entity->getEntity())) {
+			$repo = $ah->getEntityRepositoryReference($entity->getName());
+
+			// add tree to return array
+			$response
+				->setTreeHtml($this->get('itf.admin.tree')->getTreeListHTML($repo))
+				->setTemplate('@ITFAdmin/Admin/tree/index.html.twig')
+			;
+		}
+
+		// if template set
+		if (isset($entity_config['template']['edit'])) {
+			$response->setTemplate($entity_config['template']['edit']);
+		}
 
 		return $response->createResponse();
 	}
@@ -410,8 +433,17 @@ class AdminController extends Controller
 				throw $this->createNotFoundException(sprintf('Unable to find %e entity.', $entity->getName()));
 			}
 
-			$em->remove($entity);
-			$em->flush();
+			// tree
+			if ($this->get('itf.admin.annotation_reader')->isTree($entity)) {
+				$repo = $ah->getEntityRepositoryReference($_entity);
+
+				/* @var \ITF\AdminBundle\Admin\Tree\TreeInterface $entity */
+				$this->get('itf.admin.tree')->deleteElement($entity, $repo);
+
+			} else {
+				$em->remove($entity);
+				$em->flush();
+			}
 		}
 
 		return $this->redirect($this->generateUrl('admin_list', array(
@@ -467,12 +499,11 @@ class AdminController extends Controller
 		));
 
 		// if tree add root
-		if ($this->get('itf.admin.annotation_reader')->isGedmoTree($entity->getEntity())) {
-			/* @var \Gedmo\Tree\Entity\Repository\NestedTreeRepository $repo */
+		/*if ($this->get('itf.admin.annotation_reader')->isGedmoTree($entity->getEntity())) {
 			$repo = $ah->getEntityRepositoryReference($entity->getName());
 
 			$this->get('itf.admin.gedmo.tree.form')->handleFormNew($form, $repo, $entity->getFQClassName());
-		}
+		}*/
 
 		$form->add('submit_stay', 'submit', array(
 			'label' => $submit_label,

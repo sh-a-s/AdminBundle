@@ -38,6 +38,12 @@ interface TreeInterface
 	public function setLabel($label);
 	public function getLabel();
 
-	public function getParentId();
+	/**
+	 * @param TreeInterface $parent
+	 *
+	 * @return TreeInterface|null
+	 */
 	public function setParent(TreeInterface $parent);
+	public function getParent();
+	public function getParentId();
 }

@@ -35,7 +35,7 @@
 {% block admin_title %}Edit {{ _Entity }}{% endblock %}
 
 {% block content %}
-    {{ include('@ITFAdmin/Admin/edit.content.html.twig', {
+    {{ include('ITFAdminBundle:Admin:edit.content.html.twig', {
         bundle: bundle,
         entity: entity,
         entity_assoc: entity_assoc,

@@ -64,11 +64,15 @@ class AdminHelper
 				break;
 			}
 		}
+
+		return $this;
 	}
 
 	public function setEntity($entity)
 	{
 		$this->entity = $entity;
+
+		return $this;
 	}
 
 	public function getBundle()
@@ -238,6 +242,11 @@ class AdminHelper
 		}
 	}
 
+	public function getEntityNameShort()
+	{
+		return $this->entity;
+	}
+
 	public function getEntityRepository($entity, $bundle = NULL)
 	{
 		if (empty($bundle)) {
@@ -251,6 +260,12 @@ class AdminHelper
 		return $bundle . ":" . $this->getEntityName($entity);
 	}
 
+	/**
+	 * @param $entity
+	 * @param null $bundle
+	 *
+	 * @return \Doctrine\ORM\EntityRepository
+	 */
 	public function getEntityRepositoryReference($entity, $bundle = NULL)
 	{
 		return $this->getEntityManager()->getRepository($this->getEntityRepository($entity, $bundle));

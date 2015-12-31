@@ -27,6 +27,8 @@ assetic:
                 - 'bundles/itfadmin/inspinia/css/plugins/colorpicker/bootstrap-colorpicker.min.css'
                 - 'bundles/itfadmin/inspinia/css/plugins/datapicker/datepicker3.css'
                 - 'bundles/itfadmin/inspinia/css/plugins/datapicker/bootstrap-datetimepicker.css'
+                - 'bundles/itfadmin/plugins/selectize/css/selectize.css'
+                - 'bundles/itfadmin/plugins/selectize/css/selectize.default.css'
 
       admin_edit_js:
           inputs:
@@ -40,6 +42,7 @@ assetic:
                 - 'bundles/itfadmin/inspinia/js/plugins/datapicker/bootstrap-datepicker.js'
                 - 'bundles/itfadmin/inspinia/js/plugins/fullcalendar/moment.min.js'
                 - 'bundles/itfadmin/inspinia/js/plugins/datapicker/bootstrap-datetimepicker.min.js'
+                - 'bundles/itfadmin/plugins/selectize/js/standalone/selectize.js'
 
       bootstrap_glyphicons_ttf:
           inputs:

@@ -17,6 +17,11 @@
     <a class="btn btn-primary" href="{{ path('admin_new', { 'entity': _entity, 'bundle': bundle }) }}">
         Create a new {{ _Entity }}
     </a>
+    <div class="display-inline-block">
+        {% if delete_form is defined %}
+            {{ form(delete_form) }}
+        {% endif %}
+    </div>
 {% endblock %}
 
 {% block admin_title %}Tree {{ _Entity }}{% endblock %}
@@ -28,7 +33,8 @@
                 <div class="ibox-title">
                     <h5>Verzeichnis</h5>
                     <div class="ibox-tools">
-                        <a href="#" data-action="add" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add</a>
+                        <a href="javascript:void(0);" data-action="add" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add</a>
+                        <a href="javascript:void(0);" data-action="refresh" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i> Refresh</a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -39,14 +45,25 @@
             </div>
         </div>
         <div class="col-lg-7">
+
+            {% if form is defined %}
+                {{ include('ITFAdminBundle:Admin:edit.content.html.twig', {
+                    bundle: bundle,
+                    entity: entity,
+                    form: form,
+                    entity_assoc: '',
+                    entity_translatable: entity_translatable
+                }) }}
+            {% endif %}
+
+
+            {#
+            {{ dump() }}
             <div class="ibox float-e-margins">
-                {#<div class="ibox-title">
-                    <h5>Basic Data Tables example with responsive plugin</h5>
-                </div>#}
                 <div class="ibox-content">
                     asdf
                 </div>
-            </div>
+            </div>#}
         </div>
     </div>
 {% endblock %}

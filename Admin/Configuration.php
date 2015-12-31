@@ -50,6 +50,11 @@ class Configuration extends AbstractServiceSetter
 		return NULL;
 	}
 
+	public function getEntityConfig()
+	{
+		return @$this->getConfig()['bundles'][ $this->ah->getBundleNameShort() ]['entities'][ $this->ah->getEntityNameShort() ];
+	}
+
 
 	/**
 	 * Return AdminBundle Config

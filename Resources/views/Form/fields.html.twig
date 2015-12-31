@@ -1,11 +1,4 @@
 {% block fineuploader_widget %}
-    {#{{ dump() }}#}
-    {#{{ dump(fn_template) }}
-    {{ dump(fn_file_limit) }}
-    {{ dump(fn_bundle) }}
-    {{ dump(fn_entity) }}
-    {{ dump(fn_property) }}#}
-
     {# check if id set #}
     {% if fn_entity_id == 0 %}
         <br><i class="fa fa-info-circle"></i> You have to save this entry first to upload images. Press "Create" and start uploading.
@@ -168,4 +161,34 @@
     </script>
 
     {{ block('fineuploader_widget') }}
+{% endblock %}
+
+{% block selectize_widget %}
+    {%- if required and placeholder is none and not placeholder_in_choices and not multiple -%}
+        {% set required = false %}
+    {%- endif -%}
+    <select {{ block('widget_attributes') }}{% if multiple %} multiple="multiple"{% endif %}>
+        {%- if placeholder is not none -%}
+            <option value=""{% if required and value is empty %} selected="selected"{% endif %}>{{ placeholder != '' ? placeholder|trans({}, translation_domain) }}</option>
+        {%- endif -%}
+        {%- if preferred_choices|length > 0 -%}
+            {% set options = preferred_choices %}
+            {{- block('choice_widget_options') -}}
+            {%- if choices|length > 0 and separator is not none -%}
+                <option disabled="disabled">{{ separator }}</option>
+            {%- endif -%}
+        {%- endif -%}
+        {%- set options = choices -%}
+        {{- block('choice_widget_options') -}}
+    </select>
+{% endblock %}
+
+{% block selectize_tree_widget %}
+    {%- set type = type|default('text') -%}
+
+    <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+{% endblock %}
+
+{% block selectize_tags_widget %}
+    {{ block('selectize_tree_widget') }}
 {% endblock %}

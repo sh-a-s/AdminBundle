@@ -30,3 +30,15 @@ body {
             box-shadow:none !important;
             color:black;
         }
+
+
+/* ibox tools */
+.ibox-tools a {
+    color:#666;
+}
+
+/* nested */
+.dd-item.dd-active > .dd-handle {
+    background-color: #E4E4E4;
+    border: 1px solid #C7C7C7;
+}
