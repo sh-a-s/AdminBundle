@@ -118,11 +118,15 @@ class LoggingListener implements EventSubscriber
 		$this->em->flush();
 	}
 
+	public function check()
+	{
+		return !$this->entity instanceof LogEntry && is_object($this->container->get('security.token_storage')->getToken());
+	}
 
 	public function postPersist(LifecycleEventArgs $args)
 	{
 		$this->resolveArguments($args);
-		if (!$this->entity instanceof LogEntry) {
+		if ($this->check()) {
 
 			// get name
 			$entity_name = NULL;
@@ -140,7 +144,7 @@ class LoggingListener implements EventSubscriber
 	{
 		$this->resolveArguments($args);
 
-		if (!$this->entity instanceof LogEntry) {
+		if ($this->check()) {
 			foreach ($this->uow->getEntityChangeSet($this->entity) as $property => $change) {
 				list($before, $after) = $change;
 

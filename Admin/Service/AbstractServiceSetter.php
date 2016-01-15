@@ -60,6 +60,19 @@ abstract class AbstractServiceSetter
 	}
 
 	/**
+	 * Returns a rendered view.
+	 *
+	 * @param string $view       The view name
+	 * @param array  $parameters An array of parameters to pass to the view
+	 *
+	 * @return string The rendered view
+	 */
+	public function renderView($view, array $parameters = array())
+	{
+		return $this->container->get('templating')->render($view, $parameters);
+	}
+
+	/**
 	 * @param $type
 	 * @param null $data
 	 * @param array $options

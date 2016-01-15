@@ -111,6 +111,11 @@ class FormHelper extends AbstractServiceSetter
 		return $this;
 	}
 
+	public function setDisabled(FormBuilderInterface &$builder, $property)
+	{
+		$builder->get($property)->setDisabled(true);
+	}
+
 	/**
 	 * @param FormBuilderInterface $builder
 	 * @param $property
@@ -121,9 +126,21 @@ class FormHelper extends AbstractServiceSetter
 	public function setDisabledAtAction(FormBuilderInterface &$builder, $property, $action)
 	{
 		if ($this->isValidAction($action) && $action === $this->getAction()) {
-			$builder->get($property)->setDisabled(true);
+			$this->setDisabled($builder, $property);
 		}
 
 		return $this;
+	}
+
+	public function addDateTime(FormBuilderInterface &$builder, $property)
+	{
+		$builder->add($property, 'datetime', array(
+			'format'    => 'dd.MM.yyyy H:mm',
+			'widget' => 'single_text',
+			'attr' => array(
+				'class' => 'bs-datetimepicker',
+				'data-format' => 'DD.MM.YYYY H:mm'
+			)
+		));
 	}
 }
