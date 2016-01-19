@@ -241,12 +241,16 @@ class Tree extends AbstractServiceSetter
 	}
 
 	/**
-	 * @param $id
+	 * @param int $id
 	 * @param EntityRepository $repository
 	 *
+	 * @param null $label
+	 *
 	 * @return bool
+	 * @throws \Doctrine\ORM\NoResultException
+	 * @throws \Doctrine\ORM\NonUniqueResultException
 	 */
-	public function addElement($id = 0, EntityRepository $repository)
+	public function addElement($id = 0, EntityRepository $repository, $label = NULL)
 	{
 		$em = $this->getEntityManager();
 		$qb = $repository->createQueryBuilder('a');
@@ -254,7 +258,9 @@ class Tree extends AbstractServiceSetter
 
 		/* @var TreeInterface $entry */
 		$entry = new $class();
-		$entry->setLabel('New');
+		if (!empty($label)) {
+			$entry->setLabel($label);
+		}
 
 		if ($id == 0) {
 			// get max_right
@@ -269,7 +275,6 @@ class Tree extends AbstractServiceSetter
 				$rgt = $lft + 1;
 
 				/* @var TreeInterface $entry */
-				$entry = new $class();
 				$entry
 					->setLft($lft)
 					->setRgt($rgt)
@@ -286,26 +291,30 @@ class Tree extends AbstractServiceSetter
 		} else {
 			/* @var TreeInterface|NULL $parent */
 			$parent = $repository->find($id);
-			$queries = array();
+
+			//dump($parent);
 
 			if ($parent !== NULL) {
 				$lft = $parent->getRgt();
 				$rgt = $lft + 1;
 
+				$queries = array();
+
 				// update rgt
-				$qb
+				$queries[] = $qb
 					->update()
 					->set('a.rgt', 'a.rgt + 2')
 					->where('a.rgt >= :lft')
 					->setParameter('lft', $lft)
 					->getQuery()
+					->getResult()
 				;
 
 				// update lft
-				$qb
+				$queries[] = $qb
 					->update()
 					->set('a.lft', 'a.lft + 2')
-					->where('a.rgt > :lft')
+					->where('a.lft > :lft')
 					->setParameter('lft', $lft)
 					->getQuery()
 					->getResult()

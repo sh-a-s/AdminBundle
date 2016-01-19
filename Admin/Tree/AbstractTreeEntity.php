@@ -32,7 +32,27 @@ abstract class AbstractTreeEntity implements TreeInterface
 	 */
 	protected $rgt;
 
+	/**
+	 * @ORM\Column(type="datetime", nullable=true)
+	 */
+	protected $updated_at;
+
 	protected $parent;
+
+	protected $bulk_add;
+
+
+	public function getBulkAdd()
+	{
+		return $this->bulk_add;
+	}
+
+	public function setBulkAdd($bulk_add)
+	{
+		$this->bulk_add = $bulk_add;
+
+		return $this;
+	}
 
 
 	public function getId()
@@ -129,6 +149,30 @@ abstract class AbstractTreeEntity implements TreeInterface
 		$this->rgt = $rgt;
 
 		return $this;
+	}
+
+	/**
+	 * Set updated_at
+	 *
+	 * @param \DateTime $updatedAt
+	 *
+	 * @return $this
+	 */
+	public function setUpdatedAt($updatedAt)
+	{
+		$this->updated_at = $updatedAt;
+
+		return $this;
+	}
+
+	/**
+	 * Get updated_at
+	 *
+	 * @return \DateTime
+	 */
+	public function getUpdatedAt()
+	{
+		return $this->updated_at;
 	}
 
 	public function __toString()

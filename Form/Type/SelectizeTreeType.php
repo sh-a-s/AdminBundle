@@ -138,10 +138,14 @@ class SelectizeTreeType extends AbstractType
 		// value
 		$this->defaults['value'] = null;
 		$values = array();
-		foreach($view->vars['data'] as $key => $value) {
-			$values[] = $value->getId();
+
+		$this->defaults['selectize']['value'] = null;
+		if (count($view->vars['data']) > 0) {
+			foreach ($view->vars['data'] as $key => $value) {
+				$values[] = $value->getId();
+			}
+			$this->defaults['selectize']['value'] = implode($values, ',');
 		}
-		$this->defaults['selectize']['value'] = implode($values, ',');
 
 		foreach($this->defaults['selectize'] as $attr => $value) {
 			$this->defaults['attr']['data-selectize-' . $attr] = $value;

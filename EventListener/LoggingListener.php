@@ -120,7 +120,19 @@ class LoggingListener implements EventSubscriber
 
 	public function check()
 	{
-		return !$this->entity instanceof LogEntry && is_object($this->container->get('security.token_storage')->getToken());
+		$enableLogging = @$this->container->getParameter('itf_admin')['enable_logging'];
+
+		$isBundleEnabled = false;
+		if ($enableLogging && count($enableLogging) > 0) {
+			$class = get_class($this->entity);
+			foreach($enableLogging as $enabledBundle) {
+				if (preg_match('/^'.$enabledBundle.'/', $class)) {
+					$isBundleEnabled = true;
+				}
+			}
+		}
+
+		return !$this->entity instanceof LogEntry && $isBundleEnabled && is_object($this->container->get('security.token_storage')->getToken());
 	}
 
 	public function postPersist(LifecycleEventArgs $args)

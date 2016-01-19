@@ -139,6 +139,8 @@ $(function() {
             });
         });
 
+
+
         $('.ibox-tools a[data-action="add"]').on('click', function() {
             // get active
             var active = $(elem).find(listtype).find('li.dd-active'),

@@ -38,6 +38,13 @@ services:
         tags:
             - { name: doctrine.event_subscriber, connection: default }
 
+    itf.listener.orm.tree:
+        class: ITF\AdminBundle\EventListener\SelectizeTreeListener
+        calls:
+            - [ setContainer, [ @service_container ] ]
+        tags:
+            - { name: doctrine.event_subscriber, connection: default }
+
 
     # form
     itf.admin.form.type.fineuploader:
