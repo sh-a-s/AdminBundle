@@ -33,9 +33,8 @@
                 <div class="ibox-title">
                     <h5>Verzeichnis</h5>
                     <div class="ibox-tools">
-                        {#<a href="javascript:void(0);" data-action="add" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add</a>
-                        <a href="javascript:void(0);" data-action="refresh" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i> Refresh</a>#}
-                        <a href="{{ path('admin_tree_bulkadd', {bundle: bundle, entity: _entity}) }}" data-action="bulk-add" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Bulk Add</a>
+                        <a href="javascript:void(0);" data-action="add" class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add</a>
+                        <a href="javascript:void(0);" data-action="refresh" class="btn btn-primary btn-xs"><i class="fa fa-refresh"></i> Refresh</a>
                     </div>
                 </div>
                 <div class="ibox-content">
@@ -55,17 +54,6 @@
                     entity_assoc: '',
                     entity_translatable: entity_translatable
                 }) }}
-
-            {% elseif func_type == 'bulkadd' %}
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="ibox float-e-margins">
-                            <div class="ibox-content">
-                                {{ form(data.bulkadd_form) }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
             {% endif %}
 
 

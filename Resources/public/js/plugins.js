@@ -74,7 +74,7 @@ $(function() {
     });
 
     // nested-sortable
-    seteach(nestedsortable, function(elem) {
+    /*seteach(nestedsortable, function(elem) {
         // init
         var listtype = 'ol',
             list = $(elem).find(listtype),
@@ -175,7 +175,7 @@ $(function() {
                 }
             });
         });
-    });
+    });*/
 
     // selectize
     seteach(selectize, function(elem) {
@@ -207,17 +207,27 @@ $(function() {
                     var current = 0;
 
                     $.each(result, function(key, value) {
-                        // optgroup
-                        if (options.tree.ajax.optGroupCheck(value)) {
-                            order++;
+                        order++;
 
-                            instance.registerOptionGroup({
-                                $order: order,
-                                id: value.id,
-                                label: value.label
-                            });
-                        } else {
-                            instance.addOption(value);
+                        instance.registerOptionGroup({
+                            $order: order,
+                            id: value.id,
+                            label: value.label
+                        });
+
+                        // children
+                        var c_length = value['__children'].length;
+                        if (c_length > 0) {
+
+                            for (var i = 0; i < c_length; i++) {
+                                var c_entry = value['__children'][i];
+                                //console.log(c_entry);
+                                instance.addOption({
+                                    id: c_entry.id,
+                                    parent_id: value.id,
+                                    label: c_entry.label
+                                });
+                            }
                         }
 
                         current++;

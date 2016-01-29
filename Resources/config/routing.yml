@@ -1,7 +1,3 @@
-tree:
-    resource: '@ITFAdminBundle/Controller/TreeController.php'
-    type: annotation
-
 admin_mass_delete:
     path:     /admin_mass_delete
     defaults: { _controller: "ITFAdminBundle:Admin:multipleDelete" }
@@ -42,4 +38,7 @@ admin_delete:
     methods:  [POST, DELETE]
 
 
+admin_tree_bulkadd:
+    path:     /{bundle}/{entity}/bulkadd
+    defaults: { _controller: "ITFAdminBundle:Tree:bulkAdd" }
 

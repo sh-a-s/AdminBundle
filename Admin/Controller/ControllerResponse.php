@@ -20,6 +20,7 @@ class ControllerResponse
 	private $delete_form;
 	private $entity_assoc;
 	private $entity_translatable;
+	private $data = array();
 
 	public function __construct(Controller $controller)
 	{
@@ -317,8 +318,41 @@ class ControllerResponse
 		return $this;
 	}
 
+	/**
+	 * @return array
+	 */
+	public function getData()
+	{
+		return $this->data;
+	}
 
+	/**
+	 * @param array $data
+	 *
+	 * @return ControllerResponse
+	 */
+	public function setData(array $data)
+	{
+		$this->data = $data;
 
+		return $this;
+	}
+
+	public function addData($key, $attr)
+	{
+		$this->data[$key] = $attr;
+
+		return $this;
+	}
+
+	public function generateSimpleArray()
+	{
+		return array(
+			'bundle' => @$this->getBundle(),
+			'entity' => @$this->getEntityName(),
+			'id' => @$this->getEntityId()
+		);
+	}
 
 	public function __toArray()
 	{

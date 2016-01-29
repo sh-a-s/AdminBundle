@@ -3,15 +3,12 @@ namespace ITF\AdminBundle\Admin\Tree;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\Entity;
+use Gedmo\Tree\Entity\Repository\AbstractTreeRepository;
 use ITF\AdminBundle\Admin\Service\AbstractServiceSetter;
 use ITF\AdminBundle\Admin\Tree\TreeInterface;
 
 class Tree extends AbstractServiceSetter
 {
-	private $tree_url_function;
-
-
-
 
 	/**
 	 * @param EntityRepository $repository
@@ -29,13 +26,35 @@ class Tree extends AbstractServiceSetter
 	}
 
 
+	public function getTreeListHTML(AbstractTreeRepository $repository, $active_id = 0)
+	{
+		$ah = $this->getContainer()->get('itf.admin_helper');
+		$options = array(
+			'decorate' => true,
+			'rootOpen' => '<ul>',
+			'rootClose' => '</ul>',
+			'childOpen' => '<li>',
+			'childClose' => '</li>',
+			'nodeDecorator' => function($node) use ($ah) {
+				return '<a href="'. $ah->getEditPath($node['id']) .'">'.$node['label'].'</a> ('.$node['lft'].'::'.$node['rgt'].')';
+			}
+		);
+		$htmlTree = $repository->childrenHierarchy(
+			null,
+			false,
+			$options
+		);
+
+		return $htmlTree;
+	}
+
 	/**
 	 * @param EntityRepository $repository
 	 *
 	 * @param int $active_id
 	 *
 	 * @return string
-	 */
+
 	public function getTreeListHTML(EntityRepository $repository, $active_id = 0)
 	{
 		$entries = $this->getNodes($repository);
@@ -46,6 +65,7 @@ class Tree extends AbstractServiceSetter
 
 		return $this->generateListHTML($entries, null, $active_id);
 	}
+	 * */
 
 
 	/**
@@ -127,7 +147,35 @@ class Tree extends AbstractServiceSetter
 		return $arraySet;
 	}
 
-	public function getFlatTree(EntityRepository $repository, $nodes = null)
+	protected function flattenTreeArray($array)
+	{
+		$flat = array();
+		foreach($array as $key => $value) {
+			if ($key == '__children' && is_array($value)) {
+				$flat = array_merge($flat, $this->flattenTreeArray($value));
+			}
+		}
+
+		return $flat;
+	}
+
+	public function getFlatTree(AbstractTreeRepository $repository, $id = null)
+	{
+		$node = null;
+		if ($id !== null) {
+			$node = $repository->find($id);
+		}
+
+		$result = $repository->getChildrenQueryBuilder($node)->getQuery()->getArrayResult();
+		return $repository->buildTreeArray($result);
+	}
+
+	public function getFlatTreeByQuery(AbstractTreeRepository $repository, \Doctrine\ORM\Query $query)
+	{
+		return $repository->buildTreeArray($query->getArrayResult());
+	}
+
+	/*public function getFlatTree(EntityRepository $repository, $nodes = null)
 	{
 		if ($nodes === NULL) {
 			$entries = $this->getNodes($repository);
@@ -140,7 +188,7 @@ class Tree extends AbstractServiceSetter
 		}
 
 		return $entries;
-	}
+	}*/
 
 	protected function treeInterfaceObjectToArray(TreeInterface $entry)
 	{

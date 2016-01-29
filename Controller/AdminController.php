@@ -79,7 +79,7 @@ class AdminController extends Controller
 		;
 
 		// if tree
-		if ($this->get('itf.admin.annotation_reader')->isTree($entity_instance)) {
+		if ($this->get('itf.admin.annotation_reader')->isGedmoTree($entity_instance)) {
 			$repo = $ah->getEntityRepositoryReference($entity);
 
 			// add tree to return array
@@ -309,7 +309,7 @@ class AdminController extends Controller
 		;
 
 		// if tree
-		if ($this->get('itf.admin.annotation_reader')->isTree($entity->getEntity())) {
+		if ($this->get('itf.admin.annotation_reader')->isGedmoTree($entity->getEntity())) {
 			$repo = $ah->getEntityRepositoryReference($entity->getName());
 
 			// add tree to return array
