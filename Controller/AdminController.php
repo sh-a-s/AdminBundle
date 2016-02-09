@@ -90,7 +90,7 @@ class AdminController extends Controller
 
 			return $response->createResponse();
 
-		// if default
+			// if default
 		}
 
 		// table id
@@ -349,16 +349,30 @@ class AdminController extends Controller
 		$ah = $this->get('itf.admin_helper');
 		$ah->setBundle($bundle);
 
-		$em = $this->getDoctrine()->getManager();
+		// setup reponse
+		$response = ControllerResponse::create($this)
+			->setBundle($bundle)
+			->setEntityName($entity)
+			->setTemplate('ITFAdminBundle:Admin:edit.html.twig')
+		;
 
+		$em = $this->getDoctrine()->getManager();
 		$entity = $em->getRepository( $ah->getEntityRepository($entity) )->find($id);
 
 		// locale
+		$is_translatable = false;
 		if (method_exists($entity, 'setTranslatableLocale')) {
 			$entity->setTranslatableLocale($entity_locale);
+			$em->refresh($entity);
+			$is_translatable = true;
 		}
 
 		$entity = new \ITF\AdminBundle\Admin\Entity($entity, $this);
+		$response
+			->setEntity($entity->getEntity())
+			->setEntityAssoc($entity->getEntityAssociations())
+			->setEntityTranslatable($is_translatable)
+		;
 
 		if (!$entity) {
 			throw $this->createNotFoundException(sprintf('Unable to find %e entity.', $entity->getName()));
@@ -369,10 +383,6 @@ class AdminController extends Controller
 		$form->handleRequest($request);
 
 		if ($form->isValid()) {
-			// upload
-			//$entityUpload = new EntityUpload($entity->getEntity());
-			//$entityUpload->upload();
-
 			$em->persist($entity->getEntity());
 			$em->flush();
 
@@ -397,6 +407,13 @@ class AdminController extends Controller
 				'bundle' => $ah->getBundleNameShort()
 			)));
 		}
+
+		$response
+			->setForm($form->createView())
+			->setDeleteForm($deleteForm->createView())
+		;
+
+		return $response->createResponse();
 
 		return $this->render('ITFAdminBundle:Admin:edit.html.twig', array(
 			'entity'      => $entity->getEntity(),
@@ -539,7 +556,7 @@ class AdminController extends Controller
 			->setMethod('DELETE')
 			->add('submit', 'submit', array('label' => 'Delete', 'attr' => array('class' => 'btn btn-danger')))
 			->getForm()
-		;
+			;
 	}
 
 	public function entityLanguageSwitchAction($bundle, $entity, $id)
