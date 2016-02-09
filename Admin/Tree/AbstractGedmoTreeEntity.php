@@ -194,4 +194,31 @@ abstract class AbstractGedmoTreeEntity
 	{
 		return $this->rgt;
 	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getLvl()
+	{
+		return (int) $this->lvl;
+	}
+
+	/**
+	 * @param mixed $lvl
+	 *
+	 * @return AbstractGedmoTreeEntity
+	 */
+	public function setLvl($lvl)
+	{
+		$this->lvl = $lvl;
+
+		return $this;
+	}
+
+	protected $indented_label;
+
+	public function getIndentedLabel()
+	{
+		return str_repeat(" - ", $this->getLvl()). ' ' . $this->getLabel();
+	}
 }
