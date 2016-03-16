@@ -1,5 +1,6 @@
 {
     "name": "itf/admin-bundle",
+    "minimum-stability": "dev",
     "description": "symfony admin bundle",
     "type": "library",
     "require": {
