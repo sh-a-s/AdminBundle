@@ -122,6 +122,10 @@ class LoggingListener implements EventSubscriber
 	{
 		$enableLogging = @$this->container->getParameter('itf_admin')['enable_logging'];
 
+		if ($this->container->get('session')->get('itf_admin.logging.enabled') === false) {
+			$enableLogging = false;
+		}
+
 		$isBundleEnabled = false;
 		if ($enableLogging && count($enableLogging) > 0) {
 			$class = get_class($this->entity);
