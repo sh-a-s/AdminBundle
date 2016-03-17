@@ -37,10 +37,10 @@
 {% block content %}
     {{ include('ITFAdminBundle:Admin:edit.content.html.twig', {
         bundle: bundle,
-        entity: entity,
-        entity_assoc: entity_assoc,
+        entity: entity|default(null),
+        entity_assoc: entity_assoc|default(null),
         form: form,
-        entity_translatable: entity_translatable
+        entity_translatable: entity_translatable|default(null)
     }) }}
 {% endblock %}
 

@@ -86,8 +86,10 @@ class SelectizeTreeType extends AbstractType
 
 		// convert persistentcollection to array
 		$current_data = array();
-		foreach($c_data as $row) {
-			$current_data[] = $row;
+		if (count($c_data) > 0) {
+			foreach ($c_data as $row) {
+				$current_data[] = $row;
+			}
 		}
 
 		if (strlen($data) > 0) {
