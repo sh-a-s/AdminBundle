@@ -23,15 +23,15 @@
         {# generate paths #}
         <script>
             if (typeof session_path === 'undefined') {
-                var session_path = '{{ path('vi_fineuploader_list', { bundle: fn_bundle, entity: fn_entity, property: fn_property, id: fn_entity_id }) }}';
+                var session_path = '{{ path('admin_upload_fineuploader_list', { bundle: fn_bundle, entity: fn_entity, property: fn_property, id: fn_entity_id }) }}';
             }
 
             if (typeof request_path === 'undefined') {
-                var request_path = '{{ path('vi_fineuploader_upload', { bundle: fn_bundle, entity: fn_entity, property: fn_property, id: fn_entity_id }) }}';
+                var request_path = '{{ path('admin_upload_fineuploader_upload', { bundle: fn_bundle, entity: fn_entity, property: fn_property, id: fn_entity_id }) }}';
             }
 
             if (typeof delete_path === 'undefined') {
-                var delete_path = '{{ path('vi_fineuploader_delete', { bundle: fn_bundle, entity: fn_entity, property: fn_property, id: fn_entity_id }) }}';
+                var delete_path = '{{ path('admin_upload_fineuploader_delete', { bundle: fn_bundle, entity: fn_entity, property: fn_property, id: fn_entity_id }) }}';
             }
         </script>
 
@@ -132,7 +132,7 @@
 {% block fineuploader_multiple_widget %}
 
     <script>
-        var session_path = '{{ path('vi_fineuploader_list', {
+        var session_path = '{{ path('admin_upload_fineuploader_list', {
             bundle: fn_bundle,
             entity: fn_entity,
             property: fn_entity_property,
@@ -141,7 +141,7 @@
             fk_bundle: fn_fk_bundle
         }) }}';
 
-        var request_path = '{{ path('vi_fineuploader_upload', {
+        var request_path = '{{ path('admin_upload_fineuploader_upload', {
             bundle: fn_bundle,
             entity: fn_entity,
             property: fn_entity_property,
@@ -150,7 +150,7 @@
             fk_bundle: fn_fk_bundle
         }) }}';
 
-        var delete_path = '{{ path('vi_fineuploader_delete', {
+        var delete_path = '{{ path('admin_upload_fineuploader_delete', {
             bundle: fn_bundle,
             entity: fn_entity,
             property: fn_entity_property,

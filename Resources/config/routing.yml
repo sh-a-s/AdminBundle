@@ -37,8 +37,12 @@ admin_delete:
     defaults: { _controller: "ITFAdminBundle:Admin:delete" }
     methods:  [POST, DELETE]
 
-
 admin_tree_bulkadd:
     path:     /{bundle}/{entity}/bulkadd
     defaults: { _controller: "ITFAdminBundle:Tree:bulkAdd" }
 
+
+# upload
+admin_upload_fineuploader:
+    resource: "@ITFAdminBundle/Controller/Upload/FineuploaderController.php"
+    type: annotation
