@@ -23,8 +23,8 @@
 
     {% for item in menu %}
     <li {% if item.active == true %} class="active"{% endif %}>
-        <a href="{{ item.url }}" {% if item.has_error is sameas(true) %}style="opacity:.5;"{% endif %}>
-            {% if item.has_error is sameas(true) %}
+        <a href="{{ item.url }}" {% if item.has_error is same as(true) %}style="opacity:.5;"{% endif %}>
+            {% if item.has_error is same as(true) %}
                 <i class="fa fa-exclamation-triangle"></i>
             {% else %}
                 <i class="fa fa-edit"></i>
