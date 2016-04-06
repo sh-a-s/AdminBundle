@@ -261,7 +261,7 @@ class AdminController extends Controller
 		$translatable->setTranslationFallback(false);
 
 		// set locale
-		$entity_locale = $this->default_locale;
+		$entity_locale = $this->getDefaultLocale();
 		if (strlen($request->get('locale')) > 0) {
 			$entity_locale = $request->get('locale');
 		}
@@ -341,7 +341,7 @@ class AdminController extends Controller
 	public function updateAction($bundle, Request $request, $entity, $id)
 	{
 		// set locale
-		$entity_locale = $this->default_locale;
+		$entity_locale = $this->getDefaultLocale();
 		if (strlen($request->get('locale')) > 0) {
 			$entity_locale = $request->get('locale');
 		}
@@ -561,13 +561,13 @@ class AdminController extends Controller
 
 	public function entityLanguageSwitchAction($bundle, $entity, $id)
 	{
-		$locales = array('en', 'de', 'fr', 'it');
+		$locales = $this->getParameter('locales');
 		$Entity = new \ITF\AdminBundle\Admin\Entity($entity, $this);
 
 		$request = Request::createFromGlobals();
 		$current_locale = $request->get('locale');
 		if (empty($current_locale)) {
-			$current_locale = $this->default_locale;
+			$current_locale = $this->getDefaultLocale();
 		}
 
 		$items = array();
@@ -587,5 +587,10 @@ class AdminController extends Controller
 		return $this->render('@ITFAdmin/Admin/helper/bs.btn-groups.html.twig', array(
 			'items' => $items
 		));
+	}
+
+	private function getDefaultLocale()
+	{
+		return $this->getParameter('locale');
 	}
 }
