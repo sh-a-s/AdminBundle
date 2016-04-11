@@ -11,7 +11,7 @@
 }
 
 /* selectize */
-input.selectize {
+input.selectize, select.selectize:not(.selectized) {
     color: #303030;
     font-family: inherit;
     font-size: 13px;

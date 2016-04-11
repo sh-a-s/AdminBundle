@@ -39,7 +39,6 @@ class FineuploaderMultipleType extends FineuploaderType
 
 		$entity = $form->getParent()->getData();
 		$property_name = $view->vars['name'];
-
 		$this->defaults = array_merge($this->defaults, $options);
 
 		// entity info
@@ -50,6 +49,14 @@ class FineuploaderMultipleType extends FineuploaderType
 		$this->defaults['fn_property'] = $property_name;
 		$this->defaults['fn_fk_entity'] = $fk_entity_info['entity_short'];
 		$this->defaults['fn_fk_bundle'] = $fk_entity_info['bundle_short'];
+
+		// extract constraints
+		$validator = $this->container->get('validator');
+		$metadata = $validator->getMetadataFor($fk_entity_info['entity_fq']);
+
+		if (isset($metadata->properties[$this->defaults['fn_entity_property']])) {
+			$this->extractConstraints($metadata->properties[$this->defaults['fn_entity_property']]);
+		}
 
 		// set id
 		if (method_exists($entity, 'getId')) {

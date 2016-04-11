@@ -7,6 +7,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\Validator\Constraints\Image;
+use Symfony\Component\Validator\Exception\InvalidOptionsException;
+use Symfony\Component\Validator\Mapping\PropertyMetadata;
 
 class FineuploaderType extends AbstractType
 {
@@ -20,6 +23,16 @@ class FineuploaderType extends AbstractType
 		'fn_entity' => NULL,
 		'fn_entity_id' => 0,
 		'fn_property' => NULL,
+		'allowed_extensions' => array(),
+		'constraints' => array(
+			'mimeTypes' => '*',
+			'minWidth' => 0,
+			'maxWidth' => 0,
+			'minHeight' => 0,
+			'maxHeight' => 0,
+			'minRatio' => 0,
+			'maxSize' => 0
+		)
 		//'fn_max_size' =>
 		//'fn_file_types' =>
 	);
@@ -27,6 +40,18 @@ class FineuploaderType extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults($this->defaults);
+	}
+
+	public function extractConstraints(PropertyMetadata $propertyMetadata)
+	{
+		foreach($propertyMetadata->getConstraints() as $constraint) {
+			foreach($this->defaults['constraints'] as $key => $value) {
+				try {
+					$this->defaults['constraints'][ $key ] = @$constraint->{$key};
+				} catch (InvalidOptionsException $e) {}
+			}
+		}
+		//dump($this->defaults['constraints']);exit;
 	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
@@ -53,6 +78,14 @@ class FineuploaderType extends AbstractType
 		$this->defaults['fn_entity'] = $entity_info['entity_short'];
 		$this->defaults['fn_bundle'] = $entity_info['bundle_short'];
 		$this->defaults['fn_property'] = $property_name;
+
+		// extract constraints
+		$validator = $this->container->get('validator');
+		$metadata = $validator->getMetadataFor(get_class($entity));
+
+		if (isset($metadata->properties[$this->defaults['fn_property']])) {
+			$this->extractConstraints($metadata->properties[$this->defaults['fn_property']]);
+		}
 
 		// set id
 		if (method_exists($entity, 'getId')) {
