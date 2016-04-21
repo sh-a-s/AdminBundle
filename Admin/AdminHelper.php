@@ -487,6 +487,17 @@ class AdminHelper
 		return false;
 	}
 
+	protected function dtGetColumnByProperty($property, $fields)
+	{
+		foreach($fields as $title => $db_property) {
+			if (preg_match('/'.$property.'/', $db_property)) {
+				return $fields[$title];
+			}
+		}
+
+		return false;
+	}
+
 	protected function dtGetEntityByChar($char)
 	{
 		if (isset($this->datatable['entities'][$char])) {
@@ -552,25 +563,14 @@ class AdminHelper
 		return $request->query->get('context');
 	}
 
+	/**
+	 * @param null $current_entity
+	 * @return array
+	 * @deprecated
+	 */
 	public function getAdminMenu($current_entity = NULL)
 	{
-		$entities = $this->getEntities();
-
-		$menu = array();
-		foreach($entities as $entity) {
-			$menu[] = array(
-				'title' => $this->getEntityNameFromClass($entity),
-				'entitiy_class' => $entity,
-				'active' => ($current_entity == $this->getEntityName($entity, 'strtolower')),
-				'has_error' => !class_exists($this->getEntityFormTypeClass($entity)),
-				'url' => $this->container->get('router')->generate('admin_list', array(
-					'entity' => $this->getEntityName($entity, 'strtolower'),
-					'bundle' => $this->getBundleNameShort()
-				))
-			);
-		}
-
-		return $menu;
+		return $this->container->get('itf.admin.menu')->createAdminMenu($current_entity);
 	}
 
 	public function isLoggedIn()
@@ -664,6 +664,17 @@ class AdminHelper
 
 		// set search
 		$datatable->setSearch(true);
+
+		// set order
+		$listConfig = $this->container->get('itf.admin.config')->getEntityListConfig();
+		if ($listConfig) {
+			$order_field = $this->dtGetColumnByProperty($listConfig['order_property'], $fields);
+			$order_direction = @$listConfig['order_direction'];
+
+			if ($order_field && $order_direction) {
+				$datatable->setOrder($order_field, $order_direction);
+			}
+		}
 
 		// set mass action
 		/*$datatable->setHasAction(true);

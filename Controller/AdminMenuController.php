@@ -17,7 +17,7 @@ class AdminMenuController extends Controller
 		));
 
 		return $this->render('ITFAdminBundle:Admin:menu.html.twig', array(
-			'menu' => $ah->getAdminMenu($current_entity),
+			'menu' => $this->get('itf.admin.menu')->createAdminMenu($current_entity),
 			'bundle' => $bundle,
 			'_route' => @$_route
 		));

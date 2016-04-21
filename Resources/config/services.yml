@@ -10,6 +10,10 @@ services:
         class: ITF\AdminBundle\Admin\Configuration
         arguments: [ @service_container ]
 
+    itf.admin.menu:
+        class: ITF\AdminBundle\Admin\AdminMenu
+        arguments: [ @service_container ]
+
     itf.admin.form.helper:
         class: ITF\AdminBundle\Admin\Form\FormHelper
         arguments: [ @service_container ]
