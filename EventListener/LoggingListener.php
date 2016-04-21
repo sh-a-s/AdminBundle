@@ -1,6 +1,7 @@
 <?php
 namespace ITF\AdminBundle\EventListener;
 
+use AppBundle\Entity\User;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Events;
@@ -20,7 +21,18 @@ class LoggingListener implements EventSubscriber
 	private $uow;
 
 	private $entity;
+	
+	private $logging_enabled = false;
 
+	public function setLogging($bool)
+	{
+		$this->logging_enabled = $bool;
+	}
+	
+	public function isLoggingEnabled()
+	{
+		return $this->logging_enabled;
+	}
 
 	public function getSubscribedEvents()
 	{
@@ -55,11 +67,24 @@ class LoggingListener implements EventSubscriber
 	 */
 	private function getUserId()
 	{
-		$user = $this->container->get('security.token_storage')->getToken()->getUser();
+		$user = $this->getUser();
 
 		return ($user instanceof UserInterface)
 				? (int) $user->getId()
 				: 0;
+	}
+
+	/**
+	 * @return User
+	 */
+	private function getUser()
+	{
+		return $this->container->get('security.token_storage')->getToken()->getUser();
+	}
+
+	private function isAdminUser()
+	{
+		return $this->container->get('security.authorization_checker')->isGranted('ROLE_ADMIN');
 	}
 
 	/**
@@ -105,6 +130,8 @@ class LoggingListener implements EventSubscriber
 	 */
 	private function createLogEntry($event, $message = NULL)
 	{
+		if ($this->entity instanceof LogEntry) return;
+
 		$log = new LogEntry();
 		$log
 			->setEvent($event)
@@ -116,15 +143,12 @@ class LoggingListener implements EventSubscriber
 
 		$this->em->persist($log);
 		$this->em->flush();
+		unset($log);
 	}
 
 	public function check()
 	{
 		$enableLogging = @$this->container->getParameter('itf_admin')['enable_logging'];
-
-		if ($this->container->get('session')->get('itf_admin.logging.enabled') === false) {
-			$enableLogging = false;
-		}
 
 		$isBundleEnabled = false;
 		if ($enableLogging && count($enableLogging) > 0) {
@@ -136,7 +160,11 @@ class LoggingListener implements EventSubscriber
 			}
 		}
 
-		return !$this->entity instanceof LogEntry && $isBundleEnabled && is_object($this->container->get('security.token_storage')->getToken());
+		return !$this->entity instanceof LogEntry
+			&& $isBundleEnabled
+			&& is_object($this->container->get('security.token_storage')->getToken())
+			&& $this->isLoggingEnabled()
+		;
 	}
 
 	public function postPersist(LifecycleEventArgs $args)
@@ -164,9 +192,6 @@ class LoggingListener implements EventSubscriber
 			foreach ($this->uow->getEntityChangeSet($this->entity) as $property => $change) {
 				list($before, $after) = $change;
 
-				$this->formatValue($before);
-				$this->formatValue($after);
-
 				// if not to be skipped
 				if (!in_array($property, $this->skipPropertyChange())) {
 					$message = sprintf(
@@ -186,8 +211,7 @@ class LoggingListener implements EventSubscriber
 	{
 		$this->resolveArguments($args);
 
-		if (!$this->entity instanceof LogEntry) {
-
+		if ($this->check()) {
 			// get name
 			$entity_name = NULL;
 			if (method_exists($this->entity, '__toString')) {

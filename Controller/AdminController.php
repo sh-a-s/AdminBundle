@@ -122,7 +122,7 @@ class AdminController extends Controller
 	{
 		$ah = $this->get('itf.admin_helper');
 		$ah->setBundle($bundle);
-
+		
 		// get dashboard service if available and wrap adapter
 		$dashboard = $this->get('itf.admin.factory')->createDashboardAdapter(
 			$this->get('itf.admin.config')->getDashboardService()
@@ -175,16 +175,11 @@ class AdminController extends Controller
 
 		// if valid
 		if ($form->isValid()) {
-			// if tree
-			/*if ($this->get('itf.admin.annotation_reader')->isGedmoTree($entity->getEntity())) {
-				dump($form->getData());
-
-				exit;
-			}*/
-
+			$this->setLogging(true);
 			$em->persist($entity->getEntity());
 			$em->flush();
 			$em->clear();
+			$this->setLogging(false);
 
 			// to edit
 			if ($form->get('submit_stay')->isClicked()) {
@@ -383,8 +378,10 @@ class AdminController extends Controller
 		$form->handleRequest($request);
 
 		if ($form->isValid()) {
+			$this->setLogging(true);
 			$em->persist($entity->getEntity());
 			$em->flush();
+			$this->setLogging(false);
 
 			// clear
 			$em->clear();
@@ -414,13 +411,13 @@ class AdminController extends Controller
 		;
 
 		return $response->createResponse();
+	}
 
-		return $this->render('ITFAdminBundle:Admin:edit.html.twig', array(
-			'entity'      => $entity->getEntity(),
-			'bundle'      => $ah->getBundleNameShort(),
-			'edit_form'   => $form->createView(),
-			'delete_form' => $deleteForm->createView(),
-		));
+	private function setLogging($bool)
+	{
+		$this->container->get('itf.listener.orm.logger')->setLogging($bool);
+
+		//$this->container->get('session')->set('itf_admin.logging.enabled', $bool);
 	}
 
 	/**
@@ -458,8 +455,10 @@ class AdminController extends Controller
 				$this->get('itf.admin.tree')->deleteElement($entity, $repo);
 
 			} else {
+				$this->setLogging(true);
 				$em->remove($entity);
 				$em->flush();
+				$this->setLogging(false);
 			}
 		}
 
