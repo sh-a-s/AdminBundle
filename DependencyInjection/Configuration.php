@@ -22,7 +22,7 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
-                ->scalarNode('title')->end()
+                ->scalarNode('title')->defaultNull()->end()
                 ->scalarNode('frontend_route')->end()
                 ->arrayNode('bundles')
                     ->useAttributeAsKey('name')
@@ -41,6 +41,13 @@ class Configuration implements ConfigurationInterface
 										        ->scalarNode('edit')->defaultFalse()->end()
 	                                        ->end()
 	                                    ->end()
+                                        ->arrayNode('list')
+                                            ->children()
+                                                ->scalarNode('order_property')->defaultValue(0)->end()
+                                                ->scalarNode('order_direction')->defaultValue('asc')->end()
+                                                ->integerNode('display')->defaultValue(10)->end()
+                                            ->end()
+                                        ->end()
                                     ->end()
                                 ->end()
                             ->end()

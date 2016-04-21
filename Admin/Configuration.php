@@ -49,10 +49,22 @@ class Configuration extends AbstractServiceSetter
 
 		return NULL;
 	}
-
-	public function getEntityConfig()
+	
+	/**
+	 * Get Entity Config Array
+	 * 
+	 * @param null $entity_short
+	 * @return array|null
+	 */
+	public function getEntityConfig($entity_short = null)
 	{
-		return @$this->getConfig()['bundles'][ $this->ah->getBundleNameShort() ]['entities'][ $this->ah->getEntityNameShort() ];
+		if ($entity_short === null) $entity_short = $this->ah->getEntityNameShort();
+		return @$this->getConfig()['bundles'][ $this->ah->getBundleNameShort() ]['entities'][ $entity_short ];
+	}
+
+	public function getEntityListConfig($entity_short = null)
+	{
+		return @$this->getEntityConfig()['list'];
 	}
 
 
