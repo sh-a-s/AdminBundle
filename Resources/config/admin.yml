@@ -4,7 +4,8 @@ imports:
 
 ali_datatable:
     all:    ~
-    js:     ~
+    js:
+        iDisplayLength: 25
 
 doctrine:
     orm:
