@@ -4,7 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Admin</title>
+    {% if title is not defined %}
+        {% set title = 'Admin' %}
+    {% endif %}
+    <title>{{ title }}</title>
 
     {% block stylesheets %}
         {% stylesheets filter="cssrewrite"
@@ -50,16 +53,9 @@
                             </div>
                         </form>
                     </div>
-                    <ul class="nav navbar-top-links navbar-right">
-                        <li>
-                            <span class="m-r-sm text-muted welcome-message">Backend</span>
-                        </li>
-                        <li>
-                            <a href="{{ path('fos_user_security_logout') }}">
-                                <i class="fa fa-sign-out"></i> Log out
-                            </a>
-                        </li>
-                    </ul>
+
+                    {# render topbar navigation #}
+                    {{ render(controller('ITFAdminBundle:AdminMenu:topbarNavigation')) }}
                 </nav>
             </div>
             <div class="row wrapper border-bottom white-bg page-heading">
@@ -85,13 +81,13 @@
 
             <div class="wrapper wrapper-content">
                 {% block content %}
-                    {{ dashboard_html }}
+                    {{ dashboard_html|raw }}
                     {#<div class="middle-box text-center"></div>#}
                 {% endblock %}
             </div>
             <div class="footer">
                 <div>
-                    <strong>Copyright</strong> interface-f gmbh &copy; 2015
+                    <strong>Copyright</strong> interface-f gmbh &copy; {{ 'now'|date('Y') }}
                 </div>
             </div>
         </div>

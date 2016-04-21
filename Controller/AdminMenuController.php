@@ -22,4 +22,14 @@ class AdminMenuController extends Controller
 			'_route' => @$_route
 		));
 	}
+	
+	public function topbarNavigationAction()
+	{
+		$config = $this->get('itf.admin.config')->getConfig();
+		$frontend_route = isset($config['frontend_route']) ? $config['frontend_route'] : 'homepage';
+		
+		return $this->render('@ITFAdmin/Admin/topbar/navigation.html.twig', array(
+			'frontend_route' => $frontend_route
+		));
+	}
 }

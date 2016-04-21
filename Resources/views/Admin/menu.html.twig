@@ -17,7 +17,7 @@
         </div>
     </li>
 
-    <li>
+    <li {% if app.request.attributes.get('_route') == 'admin_dashboard' %}class="active"{% endif %}>
         <a href="{{ path('admin_dashboard', {bundle: bundle}) }}"><i class="fa fa-th-large"></i> <span class="nav-label">Dashboard</span></a>
     </li>
 

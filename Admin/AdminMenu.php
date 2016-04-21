@@ -5,6 +5,8 @@ use AppBundle\Library\PN\AbstractServiceSetter;
 
 class AdminMenu extends AbstractServiceSetter
 {
+    private $current_entity;
+    
     /**
      * Create Admin Menu
      * 
@@ -13,6 +15,7 @@ class AdminMenu extends AbstractServiceSetter
      */
     public function createAdminMenu($current_entity = NULL)
     {
+        if ($current_entity !== NULL) $this->setCurrentEntity($current_entity);
         $entities = $this->getHelper()->getEntities();
 
         $menu = array();
@@ -22,7 +25,7 @@ class AdminMenu extends AbstractServiceSetter
             $menu[] = array(
                 'title' => $this->getTitle($entity),
                 'entitiy_class' => $entity,
-                'active' => ($current_entity == $entity_short),
+                'active' => ($this->getCurrentEntity() == $entity_short),
                 'has_error' => !class_exists($this->getHelper()->getEntityFormTypeClass($entity)),
                 'url' => $this->container->get('router')->generate('admin_list', array(
                     'entity' => $this->getHelper()->getEntityName($entity, 'strtolower'),
@@ -33,6 +36,27 @@ class AdminMenu extends AbstractServiceSetter
 
         return $menu;
     }
+    
+    /**
+     * @return mixed
+     */
+    public function getCurrentEntity()
+    {
+        return $this->current_entity;
+    }
+    
+    /**
+     * @param mixed $current_entity
+     *
+     * @return AdminMenu
+     */
+    public function setCurrentEntity($current_entity)
+    {
+        $this->current_entity = $current_entity;
+        
+        return $this;
+    }
+    
     
     
     /**
