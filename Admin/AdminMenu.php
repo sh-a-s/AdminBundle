@@ -1,7 +1,7 @@
 <?php
 namespace ITF\AdminBundle\Admin;
 
-use AppBundle\Library\PN\AbstractServiceSetter;
+use ITF\AdminBundle\Admin\Service\AbstractServiceSetter;
 
 class AdminMenu extends AbstractServiceSetter
 {
