@@ -133,7 +133,7 @@ class AdminController extends Controller
 			'entity' => NULL,
 			'entity_name' => NULL,
 			'dashboard_title' => $dashboard->getTitle(),
-			'dashboard_html' => $dashboard->renderView()
+			'dashboard_html' => $dashboard->renderDashboard()
 		));
 	}
 

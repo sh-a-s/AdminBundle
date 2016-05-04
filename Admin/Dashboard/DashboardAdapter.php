@@ -38,10 +38,10 @@ class DashboardAdapter implements DashboardInterface
 		return 'Admin Dashboard';
 	}
 
-	public function renderView()
+	public function renderDashboard()
 	{
 		if ($this->isDashboardSet()) {
-			$response = $this->getDashboardService()->renderView();
+			$response = $this->getDashboardService()->renderDashboard();
 		} else {
 			$response = new Response("");
 		}

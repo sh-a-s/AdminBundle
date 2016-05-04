@@ -1,0 +1,45 @@
+{% if title is not defined %}
+    {% set title = 'Untitled Chart' %}
+{% endif %}
+
+{% if label is not defined %}
+    {% set label = 'Actions' %}
+{% endif %}
+
+{% if id is not defined %}
+    {% set id = random('abcdefghijklmnopqrstuvwxyz0123456789-') %}
+{% endif %}
+
+<div class="ibox float-e-margins">
+    <div class="ibox-title">
+        <h5>{{ title }} <small>last {{ chart.daysRange }} days</small></h5>
+    </div>
+    <div class="ibox-content">
+        <div id="{{ id }}"></div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        var formatDate = function (x) {
+            var d = new Date(x);
+            return d.getDate() + '.' + (d.getMonth() + 1) + '.';
+        };
+
+        Morris.Line({
+            element: '{{ id }}',
+            data: JSON.parse('{{ chart.preparedResult('json')|raw }}'),
+            xkey: 'date',
+            ykeys: ['value'],
+            ymax: {{ chart.maxValue }},
+            resize: true,
+            lineWidth: 4,
+            smooth: false,
+            labels: ['{{ label }}'],
+            dateFormat: formatDate,
+            xLabelFormat: formatDate,
+            lineColors: ['#1ab394'],
+            pointSize: 5
+        });
+    });
+</script>

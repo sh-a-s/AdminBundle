@@ -13,5 +13,5 @@ interface DashboardInterface
 	/**
 	 * @return Response
 	 */
-	public function renderView();
+	public function renderDashboard();
 }

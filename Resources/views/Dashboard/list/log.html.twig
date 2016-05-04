@@ -1,0 +1,7 @@
+<div class="feed-element">
+    <div class="media-body ">
+        <small class="pull-right">{{ log.timestamp|timeago }}</small>
+        <span class="badge">{{ log.entity }}</span> <strong>{{ log.username }}</strong> {{ log.message }}<br>
+        <small class="text-muted">{{ log.timestamp|date('d.m.Y H:m:i') }}</small>
+    </div>
+</div>
