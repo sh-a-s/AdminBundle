@@ -2,6 +2,7 @@
 
 namespace ITF\AdminBundle\Controller;
 
+use AppBundle\Entity\User;
 use ITF\AdminBundle\Admin\Controller\ControllerResponse;
 use ITF\AdminBundle\Admin\Entity;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -455,10 +456,16 @@ class AdminController extends Controller
 				$this->get('itf.admin.tree')->deleteElement($entity, $repo);
 
 			} else {
-				$this->setLogging(true);
+				if (!$entity instanceof User) {
+					$this->setLogging(true);
+				}
+
 				$em->remove($entity);
 				$em->flush();
-				$this->setLogging(false);
+
+				if (!$entity instanceof User) {
+					$this->setLogging(false);
+				}
 			}
 		}
 
