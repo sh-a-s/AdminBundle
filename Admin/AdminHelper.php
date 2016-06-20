@@ -57,7 +57,19 @@ class AdminHelper
 
 	public function setBundle($bundle)
 	{
-		foreach($this->getBundles() as $bundle_name => $bundle_fq) {
+		$config = $this->container->get('itf.admin.config')->getConfig();
+		$enabled_bundles = $config['enable_bundles'];
+		$bundles = $this->getBundles();
+
+		if (is_array($enabled_bundles) && count($enabled_bundles) > 0) {
+			foreach($bundles as $_bundle => $path) {
+				if (!in_array($_bundle, $enabled_bundles)) {
+					unset($bundles[$_bundle]);
+				}
+			}
+		}
+
+		foreach($bundles as $bundle_name => $bundle_fq) {
 			if (preg_match('/'.$bundle.'/i', $bundle_name)) {
 				$this->bundle = $bundle_fq;
 				$this->bundle_name = $bundle_name;
@@ -95,13 +107,16 @@ class AdminHelper
 		$entities = array();
 		$meta = $this->em->getMetadataFactory()->getAllMetadata();
 
+		$bundle_namespace = substr($this->bundle, 0, strrpos($this->bundle, '\\'));
+		$bundle_namespace_regex = str_replace('\\', '\\\\', $bundle_namespace);
+
 		/* @var \Doctrine\ORM\Mapping\ClassMetadata $m */
 		foreach ($meta as $m) {
 			$_entity = $m->getName();
 
 			// if bundle set, select entities only within bundle
 			if (!empty($this->bundle_name)) {
-				if (preg_match('/'.$this->bundle_name.'/', $_entity)) {
+				if (preg_match('/' . $bundle_namespace_regex . '/', $_entity)) {
 					$entities[] = $_entity;
 				}
 			} else {
