@@ -304,7 +304,9 @@ class AdminHelper
 
 	public function getEntityFormTypeClass($entity)
 	{
-		return $this->getBundleName() . $this->entity_form_class_path . $this->getEntityName($entity) . "Type";
+		$bundle_namespace = substr($this->bundle, 0, strrpos($this->bundle, '\\'));
+
+		return $bundle_namespace . $this->entity_form_class_path . $this->getEntityName($entity) . "Type";
 	}
 
 	public function isEntityColumn($entity, $column_name)
