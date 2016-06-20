@@ -58,6 +58,9 @@ class Configuration implements ConfigurationInterface
 	            ->arrayNode('enable_logging')
 	                ->prototype('scalar')->end()
 	            ->end()
+                ->arrayNode('enable_bundles')
+                    ->prototype('scalar')->end()
+                ->end()
             ->end()
         ;
 
