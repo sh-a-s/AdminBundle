@@ -24,7 +24,7 @@ class FineuploaderType extends AbstractType
 		'fn_entity_id' => 0,
 		'fn_property' => NULL,
 		'allowed_extensions' => array(),
-		'constraints' => array(
+		'_constraints' => array(
 			'mimeTypes' => '*',
 			'minWidth' => 0,
 			'maxWidth' => 0,
@@ -45,13 +45,12 @@ class FineuploaderType extends AbstractType
 	public function extractConstraints(PropertyMetadata $propertyMetadata)
 	{
 		foreach($propertyMetadata->getConstraints() as $constraint) {
-			foreach($this->defaults['constraints'] as $key => $value) {
+			foreach($this->defaults['_constraints'] as $key => $value) {
 				try {
-					$this->defaults['constraints'][ $key ] = @$constraint->{$key};
+					$this->defaults['_constraints'][ $key ] = @$constraint->{$key};
 				} catch (InvalidOptionsException $e) {}
 			}
 		}
-		//dump($this->defaults['constraints']);exit;
 	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)

@@ -63,14 +63,14 @@
                 },
                 validation: {
                     itemLimit: fn_file_limit,
-                    acceptFiles: '{{ constraints.mimeTypes }}',
+                    acceptFiles: '{{ _constraints.mimeTypes }}',
                     allowedExtensions: JSON.parse('{{ allowed_extensions|json_encode|raw }}'),
-                    sizeLimit: '{{ constraints.maxSize }}',
+                    sizeLimit: '{{ _constraints.maxSize }}',
                     image: {
-                        minHeight: '{{ constraints.minHeight }}',
-                        maxHeight: '{{ constraints.maxHeight }}',
-                        minWidth: '{{ constraints.minWidth }}',
-                        maxWidth: '{{ constraints.maxWidth }}'
+                        minHeight: '{{ _constraints.minHeight }}',
+                        maxHeight: '{{ _constraints.maxHeight }}',
+                        minWidth: '{{ _constraints.minWidth }}',
+                        maxWidth: '{{ _constraints.maxWidth }}'
                     }
                 },
                 callbacks: {
