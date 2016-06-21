@@ -35,7 +35,7 @@ class FineuploaderMultipleType extends FineuploaderType
 
 	public function buildView(FormView $view, FormInterface $form, array $options)
 	{
-		parent::buildView($view, $form, $options);
+		//parent::buildView($view, $form, $options);
 
 		$entity = $form->getParent()->getData();
 		$property_name = $view->vars['name'];
