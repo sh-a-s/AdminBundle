@@ -5,6 +5,12 @@ var colorpicker = $('.bs-colorpicker'),
     selectize = $('.selectize')
 ;
 
+function getDescendantProp(obj, desc) {
+    var arr = desc.split(".");
+    while(arr.length && (obj = obj[arr.shift()]));
+    return obj;
+}
+
 /**
  * if elems set loop through each
  * @param obj
@@ -305,6 +311,48 @@ $(function() {
                         delimiter: ',',
                         persist: false,
                         create: true
+                    },
+                    suggest: {
+                        valueField: 'id',
+                        labelField: attrs['selectize-searchfield'],
+                        searchField: attrs['selectize-searchfield'],
+                        options: [],
+                        create: false,
+                        render: {
+                            option: function(item, escape) {
+                                var element = '<div>' + item[attrs['selectize-searchfield']];
+
+                                if (typeof attrs['selectize-hintfield'] !== 'undefined') {
+                                    element += ' <span class="opacity-4">' + getDescendantProp(item, attrs['selectize-hintfield']) + '</span>';
+                                }
+
+                                element += '</div>';
+                                return element;
+                            }
+                        },
+                        load: function(query, callback) {
+                            if (!query.length) return callback();
+                            $.ajax({
+                                url: Routing.generate(attrs['selectize-route']),
+                                type: 'GET',
+                                dataType: 'json',
+                                contentType: 'json',
+                                data: {
+                                    query: query,
+                                    limit: 10
+                                },
+                                error: function(a,b,c) {
+                                    console.error(a);
+                                    console.error(b);
+                                    console.error(c);
+                                    callback();
+                                },
+                                success: function(res) {
+                                    console.info('result', res);
+                                    callback(res);
+                                }
+                            });
+                        }
                     }
                 }
             ;
@@ -327,6 +375,9 @@ $(function() {
                 case 'tags':
                     selectize = _this.selectize(options.tags);
                     break;
+
+                case 'suggest':
+                    selectize = _this.selectize(options.suggest);
 
                 default:
                 case 'basic':

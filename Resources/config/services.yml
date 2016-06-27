@@ -86,6 +86,13 @@ services:
         tags:
             - { name: form.type, alias: selectize_tags }
 
+    itf.admin.form.type.selectize.suggest:
+        class: ITF\AdminBundle\Form\Type\SelectizeTagSuggest
+        #calls:
+        #    - [ setContainer, [ @service_container ] ]
+        tags:
+            - { name: form.type, alias: selectize_suggest }
+
     # KernelRequest listener
     extension.listener:
         class: ITF\AdminBundle\EventListener\DoctrineExtensionListener
