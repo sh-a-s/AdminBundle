@@ -6,6 +6,7 @@ ali_datatable:
     all:    ~
     js:
         iDisplayLength: 25
+        responsive: true
 
 doctrine:
     orm:
