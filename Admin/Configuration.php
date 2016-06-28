@@ -61,7 +61,7 @@ class Configuration extends AbstractServiceSetter
 	 */
 	public function getIndexService()
 	{
-		if (isset($this->getEntityConfig()['template']['index'])) {
+		if ($this->getEntityConfig()['template']['index'] != false) {
 			$index_service = $this->getContainer()->get($this->getEntityConfig()['template']['index']);
 
 			if (!$index_service instanceof IndexInterface) {
@@ -72,18 +72,6 @@ class Configuration extends AbstractServiceSetter
 		}
 
 		return NULL;
-
-		/*if (isset($this->getBundleConfig()['dashboard_service'])) {
-			$dashboard_service = $this->getContainer()->get($this->getBundleConfig()['dashboard_service']);
-
-			if (!$dashboard_service instanceof DashboardInterface) {
-				throw new Exception(sprintf('Dashboard service "%s" configuration under itf_admin.bundles.[bundle].dashboard_service has to implement DashboardInterface', $this->getBundleConfig()['dashboard_service']));
-			}
-
-			return $dashboard_service;
-		}
-
-		return NULL;*/
 	}
 	
 	/**
