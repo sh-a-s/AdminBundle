@@ -61,7 +61,7 @@ class Configuration extends AbstractServiceSetter
 	 */
 	public function getIndexService()
 	{
-		if ($this->getEntityConfig()['template']['index'] != false) {
+		if (@$this->getEntityConfig()['template']['index'] != false) {
 			$index_service = $this->getContainer()->get($this->getEntityConfig()['template']['index']);
 
 			if (!$index_service instanceof IndexInterface) {
