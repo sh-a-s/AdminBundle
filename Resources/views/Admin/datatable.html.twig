@@ -1,13 +1,14 @@
-
-{{ datatable({
-    'id' : table_id,
-    'js' : {
-        'sAjaxSource' : path('admin_grid', {
-            entity: entity_name,
-            bundle: bundle,
-            context: context,
-            table_id: table_id
-        })
-    }
-}) }}
+<div class="table-responsive">
+    {{ datatable({
+        'id' : table_id,
+        'js' : {
+            'sAjaxSource' : path('admin_grid', {
+                entity: entity_name,
+                bundle: bundle,
+                context: context,
+                table_id: table_id
+            })
+        }
+    }) }}
+</div>
 

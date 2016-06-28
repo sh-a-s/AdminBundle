@@ -42,6 +42,17 @@ admin_tree_bulkadd:
     defaults: { _controller: "ITFAdminBundle:Tree:bulkAdd" }
 
 
+# api
+admin_api:
+    resource: "@ITFAdminBundle/Controller/API/EntityController.php"
+    type: annotation
+    prefix: /api
+
+admin_render:
+    resource: "@ITFAdminBundle/Controller/API/RenderController.php"
+    type: annotation
+    prefix: /api_render
+
 # upload
 admin_upload_fineuploader:
     resource: "@ITFAdminBundle/Controller/Upload/FineuploaderController.php"

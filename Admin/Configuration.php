@@ -1,6 +1,7 @@
 <?php
 namespace ITF\AdminBundle\Admin;
 
+use ITF\AdminBundle\Admin\Index\IndexInterface;
 use ITF\AdminBundle\Admin\Service\AbstractServiceSetter;
 use ITF\AdminBundle\Admin\Dashboard\DashboardInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -53,6 +54,36 @@ class Configuration extends AbstractServiceSetter
 		}
 
 		return NULL;
+	}
+
+	/**
+	 * @return IndexInterface
+	 */
+	public function getIndexService()
+	{
+		if (isset($this->getEntityConfig()['template']['index'])) {
+			$index_service = $this->getContainer()->get($this->getEntityConfig()['template']['index']);
+
+			if (!$index_service instanceof IndexInterface) {
+				throw new Exception(sprintf('Index service "%s" configuration under itf_admin.bundles.[bundle].entities.[entity].template.index has to implement IndexInterface', $this->getEntityConfig()['template']['index']));
+			}
+
+			return $index_service;
+		}
+
+		return NULL;
+
+		/*if (isset($this->getBundleConfig()['dashboard_service'])) {
+			$dashboard_service = $this->getContainer()->get($this->getBundleConfig()['dashboard_service']);
+
+			if (!$dashboard_service instanceof DashboardInterface) {
+				throw new Exception(sprintf('Dashboard service "%s" configuration under itf_admin.bundles.[bundle].dashboard_service has to implement DashboardInterface', $this->getBundleConfig()['dashboard_service']));
+			}
+
+			return $dashboard_service;
+		}
+
+		return NULL;*/
 	}
 	
 	/**

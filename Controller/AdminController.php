@@ -65,10 +65,14 @@ class AdminController extends Controller
 	public function indexAction($bundle, $entity, $join_context = false, $context = array(), $table_id = 0, Request $request)
 	{
 		$ah = $this->get('itf.admin_helper');
+		$config = $this->get('itf.admin.config');
 		$ah->setBundle($bundle);
 		$ah->setEntity($entity);
 		$entity_instance = $ah->getEntityInstance($entity);
 
+		// TODO: refresh config (workaround)
+		$this->get('itf.admin.config')->refreshConfig();
+		
 		//$ah->disableProfiler();
 
 		// setup return
@@ -91,8 +95,17 @@ class AdminController extends Controller
 
 			return $response->createResponse();
 
-			// if default
+		} else if ($config->getIndexService() !== NULL && !$join_context) {
+			// if custom index service
+			$response = $config->getIndexService()
+				->setResponse($response)
+				->returnPrepared()
+				->getResponse()
+			;
+
+			return $response->createResponse();
 		}
+		// if default
 
 		// table id
 		if (empty($table_id)) {
@@ -319,7 +332,7 @@ class AdminController extends Controller
 		}
 
 		// if template set
-		if (isset($entity_config['template']['edit'])) {
+		if (isset($entity_config['template']['edit']) && $entity_config['template']['edit'] !== false) {
 			$response->setTemplate($entity_config['template']['edit']);
 		}
 

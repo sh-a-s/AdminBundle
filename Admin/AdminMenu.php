@@ -22,16 +22,18 @@ class AdminMenu extends AbstractServiceSetter
         foreach($entities as $entity) {
             $entity_short = $this->getHelper()->getEntityName($entity, 'strtolower');
 
-            $menu[] = array(
-                'title' => $this->getTitle($entity),
-                'entitiy_class' => $entity,
-                'active' => ($this->getCurrentEntity() == $entity_short),
-                'has_error' => !class_exists($this->getHelper()->getEntityFormTypeClass($entity)),
-                'url' => $this->container->get('router')->generate('admin_list', array(
-                    'entity' => $this->getHelper()->getEntityName($entity, 'strtolower'),
-                    'bundle' => $this->getHelper()->getBundleNameShort()
-                ))
-            );
+            if ($this->getConfig($entity_short)['exclude'] != true) {
+                $menu[] = array(
+                    'title' => $this->getTitle($entity),
+                    'entitiy_class' => $entity,
+                    'active' => ($this->getCurrentEntity() == $entity_short),
+                    'has_error' => !class_exists($this->getHelper()->getEntityFormTypeClass($entity)),
+                    'url' => $this->container->get('router')->generate('admin_list', array(
+                        'entity' => $this->getHelper()->getEntityName($entity, 'strtolower'),
+                        'bundle' => $this->getHelper()->getBundleNameShort()
+                    ))
+                );
+            }
         }
 
         return $menu;
