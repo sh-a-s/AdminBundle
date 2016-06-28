@@ -123,6 +123,9 @@ class AdminController extends Controller
 	{
 		$ah = $this->get('itf.admin_helper');
 		$ah->setBundle($bundle);
+
+		// TODO: refresh config (workaround)
+		$this->get('itf.admin.config')->refreshConfig();
 		
 		// get dashboard service if available and wrap adapter
 		$dashboard = $this->get('itf.admin.factory')->createDashboardAdapter(

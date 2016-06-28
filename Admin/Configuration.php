@@ -19,11 +19,16 @@ class Configuration extends AbstractServiceSetter
 	 */
 	public function __construct(ContainerInterface $container)
 	{
-		$this->setContainer($container);
+		parent::__construct($container);
 		$this->ah = $this->getContainer()->get('itf.admin_helper');
 		$this->config = $this->getContainer()->getParameter('itf_admin');
 
 		// set bundle config
+		$this->refreshConfig();
+	}
+
+	public function refreshConfig()
+	{
 		if (isset($this->getConfig()['bundles']) && isset($this->getConfig()['bundles'][ $this->ah->getBundleNameShort() ])) {
 			$this->bundle_config = $this->getConfig()['bundles'][ $this->ah->getBundleNameShort() ];
 		}
