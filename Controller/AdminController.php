@@ -492,6 +492,22 @@ class AdminController extends Controller
 	}
 
 	/**
+	 * @param Request $request
+	 * @param $bundle
+	 * @param $entity
+	 */
+	public function searchAction(Request $request, $bundle, $entity)
+	{
+		$ah = $this->get('itf.admin_helper');
+		$ah->setBundle($bundle);
+		$ah->setEntity($entity);
+
+		
+	}
+
+
+
+	/**
 	 * @param Entity $entity
 	 * @param $type
 	 *

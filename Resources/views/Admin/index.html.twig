@@ -16,6 +16,9 @@
 {% endblock %}
 
 {% block main_action_button %}
+    {#<a class="btn btn-default" href="{{ path('admin_search', { 'entity': _entity, 'bundle': bundle }) }}">
+        Advanced Search
+    </a>#}
     <a class="btn btn-primary" href="{{ path('admin_new', { 'entity': _entity, 'bundle': bundle }) }}">
         Create a new {{ _Entity }}
     </a>

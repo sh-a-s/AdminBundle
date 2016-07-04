@@ -50,7 +50,7 @@ class EntityController extends Controller
         try {
             $entities = $query->getResult();
         } catch (NoResultException $e) {
-            $entities = array();
+            $entities = NULL;
         }
 
         return $this->serialize($entities, $_format);

@@ -208,9 +208,12 @@
 {% block selectize_suggest_widget %}
     {%- set type = type|default('text') -%}
 
+    {#{{ dump() }}#}
+
     <select {{ block('widget_attributes') }} placeholder="Search...">
         {% if data is not null and selectize.entity is not null %}
-            <option value="{{ data }}">{{ attribute(selectize.entity, selectize.searchfield_method) }}</option>
+            {#<option value="{{ data }}">{{ attribute(data, 'label') }}</option>#}
+            <option value="{{ attribute(data, 'id') }}">{{ attribute(selectize.entity, selectize.searchfield_method) }}</option>
         {% endif %}
     </select>
 {% endblock %}

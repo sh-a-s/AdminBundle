@@ -41,6 +41,10 @@ admin_tree_bulkadd:
     path:     /{bundle}/{entity}/bulkadd
     defaults: { _controller: "ITFAdminBundle:Tree:bulkAdd" }
 
+admin_search:
+    path:     /{bundle}/{entity}/search
+    defaults: { _controller: }
+
 
 # api
 admin_api:

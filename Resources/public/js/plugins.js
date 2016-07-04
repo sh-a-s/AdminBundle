@@ -384,6 +384,22 @@ $(function() {
                     selectize = _this.selectize(options.basic);
                     break;
             }
+
+            _this.addClass('form-control').css({
+                position: 'absolute',
+                display: 'block',
+                height: '1px',
+                width: '1px',
+                top: 0,
+                left: 0,
+                border: 'none',
+                backgroundColor: 'transparent'
+            });
+            _this.parent().css('position', 'relative');
+
+            _this.on('focus', function() {
+                console.log('focused');
+            })
         });
 
         if ($(elem).attr('data-type') !== 'tree'
