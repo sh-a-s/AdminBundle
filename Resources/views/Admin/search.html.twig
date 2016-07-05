@@ -1,0 +1,139 @@
+{% extends 'ITFAdminBundle::admin_base.html.twig' %}
+
+{% set _entity = app.request.get('entity') %}
+{% set _Entity = app.request.get('entity')|capitalize %}
+
+{% block stylesheets %}
+    {{ parent() }}
+
+    {% stylesheets filter="cssrewrite"
+    '@admin_edit_css'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" />
+    {% endstylesheets %}
+{% endblock %}
+
+{% block main_action_button %}
+    {#<a class="btn btn-default" href="{{ path('admin_search', { 'entity': _entity, 'bundle': bundle }) }}">
+        Advanced Search
+    </a>#}
+    <a class="btn btn-primary" href="{{ path('admin_new', { 'entity': _entity, 'bundle': bundle }) }}">
+        Create a new {{ _Entity }}
+    </a>
+{% endblock %}
+
+{% block admin_title %}List {{ _Entity }}{% endblock %}
+
+{% macro rangeFields(name, field1, field2) %}
+    <div class="form-group">
+
+        <label class="col-md-2 col-sm-4 col-xs-12 control-label">{{ name }}</label>
+
+        <div class="col col-md-10 col-sm-8 col-xs-12">
+            <div class="row">
+                <div class="col-sm-6 col-xs-12">
+                    {{ field1|raw }}
+                </div>
+                <div class="col-sm-6 col-xs-12">
+                    {{ field2|raw }}
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endmacro %}
+
+
+{% block content %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                {#<div class="ibox-title">
+                    <h5>Basic Data Tables example with responsive plugin</h5>
+                </div>#}
+                <div class="ibox-content">
+                    {% form_theme form 'bootstrap_3_horizontal_layout.html.twig' %}
+                    {% if form is defined %}
+                        {# init range vars #}
+                        {% set range_start = false %}
+                        {% set range_field1 = null %}
+                        {% set range_field2 = null %}
+                        {% set range_title = null %}
+
+                        {{ form_start(form) }}
+                        {% for name, elem in form.children %}
+                            {# if range element #}
+                            {% if attribute(elem.vars.attr, 'data-range-type') is defined %}
+                                {# get range title #}
+                                {% if elem.vars.attr['data-range-title'] is defined %}
+                                    {% set range_title = elem.vars.attr['data-range-title'] %}
+                                {% endif %}
+
+                                {% if elem.vars.attr['data-range-type'] is sameas('start') %}
+                                    {% set range_start = true %}
+                                    {% set range_field1 = form_widget(elem) %}
+                                {% else %}
+                                    {% set range_field2 = form_widget(elem) %}
+                                    {{ _self.rangeFields(range_title, range_field1, range_field2) }}
+
+                                    {# cleanup #}
+                                    {% set range_start = false %}
+                                    {% set range_field1 = null %}
+                                    {% set range_field2 = null %}
+                                    {% set range_title = null %}
+                                {% endif %}
+
+                                {# set element rendered #}
+                                {% do elem.setRendered %}
+                            {% else %}
+                                {# if common single rendered element #}
+                                {{ form_row(elem) }}
+                            {% endif %}
+                        {% endfor %}
+                        {{ form_end(form) }}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    {% if data.search is defined %}
+                        <div class="table-responsive">
+                            {{ datatable({
+                                'id' : table_id,
+                                'js' : {
+                                    'sAjaxSource' : path('admin_grid', {
+                                        entity: entity_name,
+                                        bundle: bundle,
+                                        context: context|default(null),
+                                        table_id: table_id
+                                    })
+                                }
+                            }) }}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+
+    {% javascripts
+        '@admin_edit_js'
+    %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+
+    {# GenemuForm #}
+    {{ form_javascript(form) }}
+{% endblock %}

@@ -3,8 +3,15 @@
 namespace ITF\AdminBundle\Controller;
 
 use AppBundle\Entity\User;
+use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\NoResultException;
 use ITF\AdminBundle\Admin\Controller\ControllerResponse;
 use ITF\AdminBundle\Admin\Entity;
+use ITF\AdminBundle\Admin\Form\Search\AbstractSearchOperator;
+use ITF\AdminBundle\Admin\Form\Search\Operators\AddParameterInterface;
+use ITF\AdminBundle\Admin\Form\Search\Operators\OperatorExpression;
+use ITF\AdminBundle\Admin\Form\Search\Operators\SearchOperatorInterface;
+use ITF\AdminBundle\Admin\Form\Search\SearchFieldMapping;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,22 +34,77 @@ class AdminController extends Controller
 	/**
 	 * set datatable configs
 	 *
+	 * @param $bundle
+	 * @param $entity
+	 * @param $table_id
+	 * @param array $data
+	 *
 	 * @return \Ali\DatatableBundle\Util\Datatable
+	 * @throws \Exception
 	 */
-	private function _datatable($bundle, $entity, $table_id)
+	private function _datatable($bundle, $entity, $table_id, $data = array())
 	{
 		$request = $this->container->get('request_stack')->getCurrentRequest();
 
 		$ah = $this->get('itf.admin_helper');
 		$ah->setBundle($bundle);
+		$ah->setEntity($entity);
 
-		$db = $ah->getDatatable($entity, $request);
+		$datatable = $ah->getDatatable($entity, $request);
 
-		return $db->setDatatableId($table_id);
+		//$operatorExpressions = $request->getSession()->get('search_expressions', false);
+		$operators = @$this->get('session')->getFlashBag()->get('search_operators')[0];
+		if ($operators) {
+			/** @var SearchOperatorInterface[] $operators */
+			$fields = $ah->getDatatablesListColumns($entity);
+
+			/** @var QueryBuilder $dtQb */
+			$dtQb = $datatable->getQueryBuilder()->getDoctrineQueryBuilder();
+			$andX = $dtQb->expr()->andX();
+
+			foreach($operators as $operator) {
+				if ($operator->getExpr() !== SearchFieldMapping::OPERATOR_USE_STRING) {
+					$param = $operator->getExpr()->getParameter(false);
+
+					// convert
+					$operator->getExpr()->getExpression()->setLeftExpr($ah->dtGetColumnByProperty($param, $fields));
+
+					$andX->add($operator->getExpressionString());
+					$dtQb->setParameter($operator->getExpr()->getParameter(), $operator->getExpr()->getValue());
+				} else {
+					/** @var AbstractSearchOperator $operator */
+					$alias = str_replace('.'.$operator->getAttribute(), '', $ah->dtGetColumnByProperty($operator->getAttribute(), $fields));
+					$operator->setAlias($alias);
+
+					/** @var SearchOperatorInterface $operator */
+					$andX->add($operator->getExpressionString());
+
+					if ($operator instanceof AddParameterInterface) {
+						/** @var AddParameterInterface $operator */
+						$operator->addParameters($dtQb);
+					}
+				}
+			}
+
+			// add where
+			$dtQb->where($andX);
+
+			/*pre($dtQb->select('a.id')->getQuery()->getSQL());
+			pre($dtQb->getParameters());
+			exit;*/
+		}
+
+		return $datatable->setDatatableId($table_id);
 	}
 
 	/**
 	 * Grid action
+	 *
+	 * @param $bundle
+	 * @param $entity
+	 * @param $table_id
+	 * @param array $data
+	 *
 	 * @return Response
 	 */
 	public function gridAction($bundle, $entity, $table_id)
@@ -58,6 +120,7 @@ class AdminController extends Controller
 	 * @param bool|false $join_context
 	 * @param array $context
 	 * @param int $table_id
+	 * @param QueryBuilder $queryBuilder
 	 * @param Request $request
 	 *
 	 * @return Response
@@ -115,6 +178,7 @@ class AdminController extends Controller
 
 		// init dt
 		$this->_datatable($bundle, $entity, $response->getTableId());
+
 
 		// if join context, change template
 		if ($join_context) {
@@ -495,6 +559,8 @@ class AdminController extends Controller
 	 * @param Request $request
 	 * @param $bundle
 	 * @param $entity
+	 *
+	 * @return Response
 	 */
 	public function searchAction(Request $request, $bundle, $entity)
 	{
@@ -502,7 +568,40 @@ class AdminController extends Controller
 		$ah->setBundle($bundle);
 		$ah->setEntity($entity);
 
+		// setup reponse
+		$response = ControllerResponse::create($this)
+			->setBundle($bundle)
+			->setEntityName($entity)
+			->setTemplate('@ITFAdmin/Admin/search.html.twig')
+		;
+
+		// search
+		$searcher = $this->get('itf.admin.search');
+		$form = $searcher->createSearchForm($ah->getEntityInstance($entity));
+
+		if ($searcher->isSubmitted($request)) {
+			// map request data to field mappings
+			$searcher->mapRequestData($request);
+
+			// get result
+			$session = $this->get('session');
+			$session->getFlashBag()->add('search_operators', $searcher->getOperators());
+			//$session->set('search_operators', $searcher->getOperators());
+			$response->setData(array('search' => true));
+
+			// table id
+			if (empty($table_id)) {
+				$table_id = 'dt-' . $entity . time();
+			}
+			$response->setTableId($table_id);
+
+			// init datatable
+			$this->_datatable($bundle, $entity, $response->getTableId());
+		}
 		
+		$response->setForm($form->createView());
+
+		return $response->createResponse();
 	}
 
 

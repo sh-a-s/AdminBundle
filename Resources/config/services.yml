@@ -25,6 +25,10 @@ services:
         class: ITF\AdminBundle\Admin\Tree\Tree
         arguments: [ @service_container ]
 
+    itf.admin.search:
+        class: ITF\AdminBundle\Admin\Form\AdminSearch
+        arguments: [ @service_container ]
+
 #    itf.admin.gedmo.tree.form:
 #        class: ITF\AdminBundle\Admin\Tree\GedmoTreeForm
 #        #arguments: [ @itf.admin_helper ]

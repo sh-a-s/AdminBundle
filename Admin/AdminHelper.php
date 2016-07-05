@@ -1,6 +1,7 @@
 <?php
 namespace ITF\AdminBundle\Admin;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use Doctrine\ORM\EntityManager;
 use ITF\AdminBundle\Entity\LogEntry;
 use Symfony\Component\Config\Definition\Exception\Exception;
@@ -504,7 +505,7 @@ class AdminHelper
 		return false;
 	}
 
-	protected function dtGetColumnByProperty($property, $fields)
+	public function dtGetColumnByProperty($property, $fields)
 	{
 		foreach($fields as $title => $db_property) {
 			if (preg_match('/'.$property.'/', $db_property)) {
@@ -707,6 +708,10 @@ class AdminHelper
 		/** @var \Doctrine\ORM\QueryBuilder $qb */
 		/*$qb = $datatable->getQueryBuilder()->getDoctrineQueryBuilder();
 		dump($qb->getQuery()->getSQL());*/
+
+		//pre($this->dtGetColumnByProperty('id', $fields));exit;
+
+
 
 		return $datatable;
 	}
