@@ -13,6 +13,7 @@ use ITF\AdminBundle\Admin\Form\Search\SearchOperators;
 use ITF\AdminBundle\Admin\Service\AbstractServiceSetter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class AdminSearch extends AbstractServiceSetter
@@ -53,20 +54,52 @@ class AdminSearch extends AbstractServiceSetter
         $this->entity_instance = $entity_instance;
 
         // set field mappings
-        $this->getFieldMappings($this->getEntityInstance());
+        $this->getFieldMappings($this->getEntityInstance(), true);
 
         $formBuilder = $this->getContainer()->get('form.factory')->createBuilder(self::FORM_NAME, $this->getRequest()->query->all(), array(
             'method' => self::FORM_METHOD
         ));
 
-        foreach($this->getFieldMappingsOfType(self::FIELD_TYPE_COMMON) as $fieldMapping) {
-            /** @var $fieldMapping SearchFieldMapping */
+        foreach($this->fieldMappings as $fieldMapping) {
+            /** @var SearchFieldMapping|SearchAssociationFieldMapping $fieldMapping */
+            if ($fieldMapping instanceof SearchAssociationFieldMapping && true == false) { // disable
+                foreach($fieldMapping->getFieldMappings() as $_fieldMapping) {
+                    $_fieldMapping->renderFormField($formBuilder, function ($fields) use ($formBuilder, $_fieldMapping) {
+                        foreach ($fields as $field) {
+                            $formBuilder->add($field);
+                        }
+                    }, $_fieldMapping->getFieldName() . '_');
+                }
+            } else {
+                $fieldMapping->renderFormField($formBuilder, function($fields) use ($formBuilder) {
+                    foreach($fields as $field) {
+                        $formBuilder->add($field);
+                    }
+                });
+            }
+        }
+
+        // handle common field types
+
+        /*foreach($this->getFieldMappingsOfType(self::FIELD_TYPE_COMMON) as $fieldMapping) {
+            ** @var $fieldMapping SearchFieldMapping *
             $fieldMapping->renderFormField($formBuilder, function($fields) use ($formBuilder) {
                 foreach($fields as $field) {
                     $formBuilder->add($field);
                 }
             });
         }
+
+        // handle assoc field types
+        $assocMappings = $this->getFieldMappingsOfType(self::FIELD_TYPE_ASSOCIATION);
+        foreach($this->getFieldMappingsOfType(self::FIELD_TYPE_ASSOCIATION) as $fieldMapping) {
+            * @var $fieldMapping SearchAssociationFieldMapping *
+            $fieldMapping->renderFormField($formBuilder, function($fields) use ($formBuilder) {
+                foreach($fields as $field) {
+                    $formBuilder->add($field);
+                }
+            }, $fieldMapping->getFieldName() . '_');
+        }*/
 
         // add search button
         $formBuilder->add('submit', 'submit');
@@ -242,43 +275,66 @@ class AdminSearch extends AbstractServiceSetter
         return $this->getQueryBuilder()->getQuery();
     }
 
+    private function getMetaData($class_name)
+    {
+        return $this->getEntityManager()->getMetadataFactory()->getMetadataFor($class_name);
+    }
 
     /**
      * Get field mappings
      *
      * @param $entity_instance
+     * @param bool $get_assoc_fields
      *
      * @return ArrayCollection
-     * @throws \Doctrine\Common\Persistence\Mapping\MappingException
      */
-    public function getFieldMappings($entity_instance)
+    public function getFieldMappings($entity_instance, $get_assoc_fields = false, $save = true)
     {
-        $this->entity_instance = $entity_instance;
-        $this->meta = $this->getEntityManager()->getMetadataFactory()->getMetadataFor(get_class($this->getEntityInstance()));
+        $meta = $this->getMetaData(get_class($entity_instance));
+        $fieldMappings = new ArrayCollection();
 
         // field mappings
-        foreach($this->meta->fieldMappings as $fieldMapping) {
-            $this->fieldMappings->add(
+        foreach($meta->fieldMappings as $fieldMapping) {
+            $fieldMappings->add(
                 SearchFieldMapping::create($fieldMapping)
             );
         }
 
         // association field mappings
-        foreach($this->meta->associationMappings as $associationMapping) {
-            $this->fieldMappings->add(
-                SearchAssociationFieldMapping::create($associationMapping)
-            );
+        if ($get_assoc_fields) {
+            foreach ($meta->associationMappings as $associationMapping) {
+                $mapping = SearchAssociationFieldMapping::create($associationMapping);
+
+                // get meta for association
+                if ($get_assoc_fields) {
+                    $assocClassName = $mapping->getTargetEntity();
+                    $assocInstance = new $assocClassName();
+                    $assocFieldMappings = $this->getFieldMappings($assocInstance, false, false);
+
+                    // add field mappings to assoc
+                    $mapping->setFieldMappings($assocFieldMappings);
+                }
+
+                $fieldMappings->add(
+                    $mapping
+                );
+            }
         }
 
-        $this->request_data_mapped = true;
+        if ($save) {
+            $this->request_data_mapped = true;
+            $this->meta = $meta;
+            $this->fieldMappings = $fieldMappings;
+            $this->entity_instance = $entity_instance;
+        }
 
-        return $this->fieldMappings;
+        return $fieldMappings;
     }
 
     /**
      * @param string $type
      *
-     * @return \Doctrine\Common\Collections\Collection|static
+     * @return \Doctrine\Common\Collections\Collection
      * @throws \Exception
      */
     private function getFieldMappingsOfType($type = self::FIELD_TYPE_COMMON)

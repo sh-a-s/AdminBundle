@@ -92,18 +92,19 @@ class SearchFieldMapping
         return $searchFieldMapping;
     }
     
-    public function renderFormField(FormBuilderInterface &$builder, $callback = NULL)
+    public function renderFormField(FormBuilderInterface &$builder, $callback = NULL, $prefix = NULL)
     {
         $fields = array();
         $skip_eq = [self::TYPE_DATETIME, self::TYPE_ARRAY];
 
         if (!in_array($this->getType(), $skip_eq)) {
-            $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_START), 'choice', array(
+            $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_START, $prefix), 'choice', array(
                 //'mapped' => false,
                 'label' => false,
                 'choices' => $this->getSearchOperators()->toArray(),
                 'data' => $this->getSearchOperators()->getDefaultSelected(),
                 'attr' => array(
+                    'data-prefix' => $prefix,
                     'data-range-type' => self::RANGE_START,
                     'data-range-title' => $this->getFieldName()
                 )
@@ -112,9 +113,10 @@ class SearchFieldMapping
 
         switch($this->getType()) {
             case self::TYPE_STRING:
-                $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_END), 'text', array(
+                $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_END, $prefix), 'text', array(
                     //'mapped' => false,
                     'attr' => array(
+                        'data-prefix' => $prefix,
                         'data-range-type' => self::RANGE_END
                     ),
                     'required' => false
@@ -122,9 +124,10 @@ class SearchFieldMapping
                 break;
 
             case self::TYPE_INTEGER:
-                $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_END), 'integer', array(
+                $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_END, $prefix), 'integer', array(
                     //'mapped' => false,
                     'attr' => array(
+                        'data-prefix' => $prefix,
                         'data-range-type' => self::RANGE_END
                     ),
                     'required' => false
@@ -132,9 +135,10 @@ class SearchFieldMapping
 
                 break;
             case self::TYPE_DECIMAL:
-                $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_END), 'number', array(
+                $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_END, $prefix), 'number', array(
                     //'mapped' => false,
                     'attr' => array(
+                        'data-prefix' => $prefix,
                         'data-range-type' => self::RANGE_END
                     ),
                     'required' => false
@@ -150,11 +154,12 @@ class SearchFieldMapping
                 // dont add
                 break;
             case self::TYPE_DATETIME:
-                $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_START), 'datetime', array(
+                $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_START, $prefix), 'datetime', array(
                     //'mapped' => false,
                     'format'    => 'dd.MM.yyyy H:mm',
                     'widget' => 'single_text',
                     'attr' => array(
+                        'data-prefix' => $prefix,
                         'data-range-type' => self::RANGE_START,
                         'data-range-title' => $this->getFieldName(),
                         'placeholder' => self::RANGE_START,
@@ -164,11 +169,12 @@ class SearchFieldMapping
                     'required' => false
                 ));
 
-                $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_END), 'datetime', array(
+                $fields[] = $builder->create($this->getRangedFieldName(self::RANGE_END, $prefix), 'datetime', array(
                     //'mapped' => false,
                     'format'    => 'dd.MM.yyyy H:mm',
                     'widget' => 'single_text',
                     'attr' => array(
+                        'data-prefix' => $prefix,
                         'data-range-type' => self::RANGE_END,
                         'placeholder' => self::RANGE_END,
                         'class' => 'bs-datetimepicker',
@@ -194,9 +200,9 @@ class SearchFieldMapping
         return $this->fieldName;
     }
 
-    public function getRangedFieldName($range_type)
+    public function getRangedFieldName($range_type, $prefix = NULL)
     {
-        return $this->getFieldName() . '_' . $range_type;
+        return $prefix . $this->getFieldName() . '_' . $range_type;
     }
 
     /**

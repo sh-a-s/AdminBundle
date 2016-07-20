@@ -4,22 +4,15 @@ namespace ITF\AdminBundle\Controller;
 
 use AppBundle\Entity\User;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\NoResultException;
 use ITF\AdminBundle\Admin\Controller\ControllerResponse;
 use ITF\AdminBundle\Admin\Entity;
 use ITF\AdminBundle\Admin\Form\Search\AbstractSearchOperator;
 use ITF\AdminBundle\Admin\Form\Search\Operators\AddParameterInterface;
-use ITF\AdminBundle\Admin\Form\Search\Operators\OperatorExpression;
 use ITF\AdminBundle\Admin\Form\Search\Operators\SearchOperatorInterface;
 use ITF\AdminBundle\Admin\Form\Search\SearchFieldMapping;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\Response;
-use ITF\UploadBundle\Upload\EntityUpload;
-use Sensio\Bundle\FrameworkExtraBundle\DependencyInjection\Configuration;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
 
 /**
@@ -53,7 +46,7 @@ class AdminController extends Controller
 		$datatable = $ah->getDatatable($entity, $request);
 
 		//$operatorExpressions = $request->getSession()->get('search_expressions', false);
-		$operators = @$this->get('session')->getFlashBag()->get('search_operators')[0];
+		$operators = @$this->get('session')->get('search_operators');
 		if ($operators) {
 			/** @var SearchOperatorInterface[] $operators */
 			$fields = $ah->getDatatablesListColumns($entity);
@@ -585,8 +578,8 @@ class AdminController extends Controller
 
 			// get result
 			$session = $this->get('session');
-			$session->getFlashBag()->add('search_operators', $searcher->getOperators());
-			//$session->set('search_operators', $searcher->getOperators());
+			//$session->getFlashBag()->add('search_operators', $searcher->getOperators());
+			$session->set('search_operators', $searcher->getOperators());
 			$response->setData(array('search' => true));
 
 			// table id

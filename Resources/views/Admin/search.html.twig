@@ -62,6 +62,11 @@
 
                         {{ form_start(form) }}
                         {% for name, elem in form.children %}
+                            {# if prefix element (association) #}
+                            {% if attribute(elem.vars.attr, 'data-prefix') is defined and attribute(elem.vars.attr, 'data-prefix')|length > 0 %}
+
+                            {% endif %}
+
                             {# if range element #}
                             {% if attribute(elem.vars.attr, 'data-range-type') is defined %}
                                 {# get range title #}

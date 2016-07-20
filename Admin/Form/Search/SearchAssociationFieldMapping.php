@@ -1,6 +1,8 @@
 <?php
 namespace ITF\AdminBundle\Admin\Form\Search;
 
+use Doctrine\Common\Collections\ArrayCollection;
+
 class SearchAssociationFieldMapping extends SearchFieldMapping
 {
     /** @var string Association Object Class */
@@ -17,6 +19,9 @@ class SearchAssociationFieldMapping extends SearchFieldMapping
 
     /** @var boolean */
     private $joinColumnNullable;
+    
+    /** @var ArrayCollection */
+    private $fieldMappings;
 
     public static function create($array)
     {
@@ -141,6 +146,24 @@ class SearchAssociationFieldMapping extends SearchFieldMapping
 
         return $this;
     }
-
-
+    
+    /**
+     * @return ArrayCollection
+     */
+    public function getFieldMappings()
+    {
+        return $this->fieldMappings;
+    }
+    
+    /**
+     * @param ArrayCollection $fieldMappings
+     *
+     * @return SearchAssociationFieldMapping
+     */
+    public function setFieldMappings($fieldMappings)
+    {
+        $this->fieldMappings = $fieldMappings;
+        
+        return $this;
+    }
 }
