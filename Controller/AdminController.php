@@ -307,9 +307,9 @@ class AdminController extends Controller
 		$response->setForm($form->createView());
 
 		// if template set
-		if (isset($entity_config['template']['new'])) {
-			$response->setTemplate($entity_config['template']['new']);
-		}
+		if (isset($entity_config['template']['new'])  && $entity_config['template']['new'] !== false) {
+            $response->setTemplate($entity_config['template']['new']);
+        }
 
 		return $response->createResponse();
 	}
