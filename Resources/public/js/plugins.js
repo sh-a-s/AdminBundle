@@ -207,7 +207,7 @@ $(function() {
                     //$(elem).parent().find('.selectize-input input').attr('placeholder', 'Loading...');
                 },
                 success: function(result) {
-                    console.log('result', result);
+                    console.log('result!', result);
 
                     var order = 0;
                     var current = 0;
@@ -348,8 +348,8 @@ $(function() {
                                     callback();
                                 },
                                 success: function(res) {
-                                    console.info('result', res);
-                                    callback(res);
+                                    console.info('result!!', res);
+                                    callback(res.data);
                                 }
                             });
                         }
