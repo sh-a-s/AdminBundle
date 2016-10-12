@@ -339,7 +339,8 @@ $(function() {
                                 contentType: 'json',
                                 data: {
                                     query: query,
-                                    limit: 10
+                                    limit: 10,
+                                    attributes: attrs['selectize-searchfield']
                                 },
                                 error: function(a,b,c) {
                                     console.error(a);
