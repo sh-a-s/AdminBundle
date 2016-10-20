@@ -18,7 +18,7 @@ class SelectizeTreeType extends AbstractType
 {
 	private $container;
 
-	private $defaults = array(
+	protected $defaults = array(
 		'attr' => array(
 			'class' => 'selectize',
 			'data-type' => 'tree'
