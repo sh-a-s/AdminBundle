@@ -36,3 +36,7 @@ input.selectize, select.selectize:not(.selectized) {
     border-radius: 3px;
     margin-bottom:5px;
 }
+
+select.selectize {
+    z-index:-100;
+}

@@ -205,6 +205,10 @@
     {{ block('selectize_tree_widget') }}
 {% endblock %}
 
+{% block selectize_multiple_widget %}
+    {{ block('selectize_tree_widget') }}
+{% endblock %}
+
 {% block selectize_suggest_widget %}
     {%- set type = type|default('text') -%}
 

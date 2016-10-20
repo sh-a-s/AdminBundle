@@ -3,15 +3,20 @@ namespace ITF\AdminBundle\Admin\Tree;
 
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use JMS\Serializer\Annotation as Serializer;
+use JMS\Serializer\Annotation\ExclusionPolicy;
+use JMS\Serializer\Annotation\Expose;
 
 /**
  * @Gedmo\Tree(type="nested")
  * @ORM\Entity(repositoryClass="Gedmo\Tree\Entity\Repository\NestedTreeRepository")
+ * @ExclusionPolicy("all")
  */
 abstract class AbstractGedmoTreeEntity
 {
 	/**
 	 * @Gedmo\TreeParent()
+     * @Expose()
 	 */
 	protected $parent;
 
@@ -24,40 +29,47 @@ abstract class AbstractGedmoTreeEntity
 	 * @ORM\Column(type="integer", name="id")
 	 * @ORM\Id
 	 * @ORM\GeneratedValue(strategy="AUTO")
+     * @Expose()
 	 */
 	protected $id;
 
 	/**
 	 * @ORM\Column(type="string", length=64, nullable=true, name="label")
+     * @Expose()
 	 */
 	protected $label;
 
 	/**
 	 * @Gedmo\TreeLeft()
 	 * @ORM\Column(name="lft", type="integer")
+     * @Expose()
 	 */
 	protected $lft;
 
 	/**
 	 * @Gedmo\TreeLevel()
 	 * @ORM\Column(name="lvl", type="integer")
+     * @Expose()
 	 */
 	protected $lvl;
 
 	/**
 	 * @Gedmo\TreeRight()
 	 * @ORM\Column(name="rgt", type="integer")
+     * @Expose()
 	 */
 	protected $rgt;
 
 	/**
 	 * @ORM\Column(type="datetime", nullable=true)
+     * @Expose()
 	 */
 	protected $updated_at;
 
 	/**
 	 * @Gedmo\TreeRoot
 	 * @ORM\Column(type="integer", nullable=true)
+     * @Expose()
 	 */
 	protected $root;
 
