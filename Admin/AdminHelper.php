@@ -160,7 +160,7 @@ class AdminHelper
 		foreach ($meta as $m) {
 			//pre($m);
 			$name = $m->getName();
-			if (preg_match('/'.$entity.'/i', $name)) {
+			if (preg_match('/'.$entity.'$/i', $name)) {
 				$rfl = $m->getReflectionClass();
 
 				preg_match('/^((.*?)Bundle)/', $name, $match);
